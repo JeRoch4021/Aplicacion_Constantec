@@ -43,7 +43,7 @@ class Solicitud(Base):
     Fecha_Entrega = Column(Date, nullable=True)
     ID_Trabajador = Column(String(10), ForeignKey("Trabajadores.ID_Trabajador"), nullable=False)
 
-    estudiante = relationship("Estudiante", back_populates="solicitudes")
+    estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancia", back_populates="solicitudes")
     trabajador = relationship("Trabajador", back_populates="solicitudes")
     historial = relationship("HistorialSolicitud", back_populates="solicitud")

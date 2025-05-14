@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+import bcrypt
 from sqlalchemy.orm import Session
 from Database.database import SessionLocal
 from CRUD import crud_estudiante
@@ -15,11 +16,14 @@ def get_db():
         db.close()
 
 @router.post("/login", response_model=schemas.EstudiantesSalida)
-def login(data: schemas.EstudiantesLogin, db: Session = Depends(get_db)):
-    estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, data.No_Control)
-    if not estudiante or estudiante.Contrasena != data.Contrasena:
-        raise HTTPException (detail="Credenciales invalidas", status_code=401)
-    return estudiante
+def login(estudiante_login: schemas.EstudiantesLogin, db: Session = Depends(get_db)):
+    try:
+        estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, estudiante_login.No_Control)
+        if not estudiante or not bcrypt.checkpw(estudiante_login.Contrasena.encode('utf-8'), estudiante.Contrasena.encode('utf-8')):
+            raise HTTPException (detail="Credenciales invalidas", status_code=401)
+        return estudiante
+    except Exception as ex:
+        raise HTTPException (detail=f"Error al iniciar sesión: {str(ex)}", status_code=500)
 
 @router.put("/cambiar-contrasena", response_model=schemas.EstudiantesSalida)
 def cambiar_contrasena(no_control: str, nueva_contrasena: str, db: Session = Depends(get_db)):
