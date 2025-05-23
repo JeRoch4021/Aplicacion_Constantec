@@ -1,45 +1,47 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from Models.security import cifrar_contrasena
+from sqlalchemy import update
+#from Models.security import cifrar_contrasena
 from Models.models import Solicitud, Constancia, HistorialSolicitud
 from Models import models
 from Schemas import schemas
 from datetime import date
+from Autenticacion.seguridad import get_password_hash
 
 
-def crear_estudiante(db: Session, estudiante: schemas.EstudianteBase):
-    estudiante_dict = estudiante.model_dump()
-    estudiante_dict['Contrasena'] = cifrar_contrasena(estudiante_dict['Contrasena'])  # Cifrar la contraseña
-    db_estudiante = models.Estudiantes(**estudiante_dict)
+# def crear_estudiante(db: Session, estudiante: schemas.EstudianteBase):
+#     estudiante_dict = estudiante.model_dump()
+#     estudiante_dict['Contrasena'] = cifrar_contrasena(estudiante_dict['Contrasena'])  # Cifrar la contraseña
+#     db_estudiante = models.Estudiantes(**estudiante_dict)
 
-    db.add(db_estudiante)
-    db.commit()
-    db.refresh(db_estudiante)
-    return db_estudiante
+#     db.add(db_estudiante)
+#     db.commit()
+#     db.refresh(db_estudiante)
+#     return db_estudiante
 
 def obtener_estudiante_por_no_control(db: Session, no_control: str):
     return db.query(models.Estudiantes).filter(models.Estudiantes.No_Control == no_control).first()
 
-def obtener_estudiante_por_id(db: Session, id_estudiante: str):
-    return db.query(models.Estudiantes).filter(models.Estudiantes.ID_Estudiante == id_estudiante).first()
-
 def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
     estudiante = obtener_estudiante_por_no_control(db, no_control)
+    
     if estudiante:
-        estudiante.Contrasena = nueva_contrasena
+        estudiante.Contrasena = get_password_hash(nueva_contrasena)
         estudiante.Primer_Ingreso = False
+
         db.commit()
-        db.refresh(estudiante)
+        # db.refresh(estudiante)
+        print(estudiante)
         return estudiante
     return None
 
 def listar_estudiantes(db: Session):
     return db.query(models.Estudiantes).all()
 
-def registrar_solicitud(db: Session, id_estudiante: str, id_constancia: str, id_trabajador: str):
+def registrar_solicitud(db: Session, no_control: str, id_constancia: str, id_trabajador: str):
     nueva_solicitud = Solicitud(
-        ID_Solicitud = f"SQL-{id_estudiante}-{id_constancia}-{int(date.today().strftime('%Y%m%d'))}",
-        ID_Esdiante = id_estudiante,
+        ID_Solicitud = f"SQL-{no_control}-{id_constancia}-{int(date.today().strftime('%Y%m%d'))}",
+        No_Control = no_control,
         ID_Constancia = id_constancia,
         Fecha_Solicitud = date.today(),
         Estado = "Pendiente",
@@ -78,8 +80,8 @@ def actualizar_estado_constancia(db: Session, id_solicitud:str, nuevo_estado: st
         return solicitud
     return None
 
-def consultar_historial_solicitudes(db: Session, id_estudiante: str):
-    solicitudes = db.query(Solicitud).filter(Solicitud.ID_Estudiante == id_estudiante).all()
+def consultar_historial_solicitudes(db: Session, no_control: str):
+    solicitudes = db.query(Solicitud).filter(Solicitud.No_Control == no_control).all()
     return solicitudes
 
     

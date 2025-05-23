@@ -5,7 +5,6 @@ from datetime import date
 # Estudiantes
 
 class EstudianteBase(BaseModel):
-    ID_Estudiante: str
     No_Control: str
     Nombre: str
     Apellidos: str
@@ -44,7 +43,7 @@ class ConstanciaSalida(ConstanciaBase):
 
 class SolicitudBase(BaseModel):
     ID_Solicitud: str
-    ID_Estudiante: str
+    No_Control: str
     ID_Constancia: str
     Fecha_Solicitud: date
     Estado: str

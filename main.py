@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
-from Routers import estudiantes, constancias, solicitudes
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from Routers import estudiantes, constancias, solicitudes, login
 from sqlalchemy.orm import Session
 from Database.database import SessionLocal
 from CRUD import crud_estudiante
@@ -18,7 +19,9 @@ def get_db():
 def iniciando_sesion():
     return {"mensaje": "API de constancias activa. Usa /docs para ver la documentacion. :)"}
 
-app.include_router(estudiantes.router, prefix="/estudiantes", tags=["Estudiantes"])
-app.include_router(constancias.router, prefix="/constancias", tags=["Constancias"])
-app.include_router(solicitudes.router, prefix="/solicitudes", tags=["Solicitudes"])
+# app.include_router(login.router, prefix="/v1/login", tags=["Login"])
+app.include_router(estudiantes.router, prefix="/v1/estudiantes", tags=["Estudiantes"])
+app.include_router(constancias.router, prefix="/v1/constancias", tags=["Constancias"])
+app.include_router(solicitudes.router, prefix="/v1/solicitudes", tags=["Solicitudes"])
+
 

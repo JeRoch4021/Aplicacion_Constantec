@@ -5,9 +5,8 @@ from Database.database import Base
 
 class Estudiantes(Base):
     __tablename__ = "Estudiantes"
-
-    ID_Estudiante = Column(String(10), primary_key=True, index=True)
-    No_Control = Column(String(20), unique=True, nullable=False)
+    
+    No_Control = Column(String(20), primary_key=True, index=True)
     Nombre = Column(String(100), nullable=False)
     Apellidos = Column(String(100), nullable=False)
     Fecha_Nacimiento = Column(Date, nullable=False)
@@ -36,7 +35,7 @@ class Solicitud(Base):
     __tablename__ = "Solicitudes"
 
     ID_Solicitud = Column(String(10), primary_key=True, index=True)
-    ID_Estudiante = Column(String(10), ForeignKey("Estudiantes.ID_Estudiante"), nullable=False)
+    No_Control = Column(String(10), ForeignKey("Estudiantes.No_Control"), nullable=False)
     ID_Constancia = Column(String(10), ForeignKey("Constancias.ID_Constancia"), nullable=False)
     Fecha_Solicitud = Column(Date, nullable=False)
     Estado = Column(String(50), nullable=False)
