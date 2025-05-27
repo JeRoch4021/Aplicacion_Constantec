@@ -1,34 +1,30 @@
-import {
-    Login,
-    Dashboard
-} from '../pages'
+import { Login, Dashboard } from '../pages'
 import {
   RouterProvider,
   createRootRoute,
   createRoute,
   createRouter,
-  redirect,
-} from "@tanstack/react-router";
+} from '@tanstack/react-router'
 
 const rootRoute = createRootRoute({
   component: () => <RouterProvider router={router} />,
-});
+})
 
 const loginRoute = createRoute({
-  path: "/login",
+  path: '/login',
   getParentRoute: () => rootRoute,
   component: Login,
-});
+})
 
 // Protected: Dashboard Route
 const dashboardRoute = createRoute({
-  path: "/dashboard",
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
   component: Dashboard,
-});
+})
 
 // Build Route Tree
-const routeTree = rootRoute.addChildren([loginRoute, dashboardRoute]);
+const routeTree = rootRoute.addChildren([loginRoute, dashboardRoute])
 
 // Create Router
-export const router = createRouter({ routeTree });
+export const router = createRouter({ routeTree })
