@@ -1,11 +1,8 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import update
 #from Models.security import cifrar_contrasena
-from Models.models import Solicitud, Constancia, HistorialSolicitud
-from Models import models
-from Schemas import schemas
-from datetime import date
+from Models.models import Estudiantes, Solicitud, Constancia, HistorialSolicitud
+from datetime import date, datetime
 from Autenticacion.seguridad import get_password_hash
 
 
@@ -19,8 +16,11 @@ from Autenticacion.seguridad import get_password_hash
 #     db.refresh(db_estudiante)
 #     return db_estudiante
 
+
+# Métodos para los endpoints de estudiantes
+
 def obtener_estudiante_por_no_control(db: Session, no_control: str):
-    return db.query(models.Estudiantes).filter(models.Estudiantes.No_Control == no_control).first()
+    return db.query(Estudiantes).filter(Estudiantes.No_Control == no_control).first()
 
 def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
     estudiante = obtener_estudiante_por_no_control(db, no_control)
@@ -36,39 +36,64 @@ def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
     return None
 
 def listar_estudiantes(db: Session):
-    return db.query(models.Estudiantes).all()
+    return db.query(Estudiantes).all()
 
-def registrar_solicitud(db: Session, no_control: str, id_constancia: str, id_trabajador: str):
-    nueva_solicitud = Solicitud(
-        ID_Solicitud = f"SQL-{no_control}-{id_constancia}-{int(date.today().strftime('%Y%m%d'))}",
-        No_Control = no_control,
-        ID_Constancia = id_constancia,
-        Fecha_Solicitud = date.today(),
-        Estado = "Pendiente",
-        ID_Trabajador = id_trabajador
+
+# Métodos para el endpoint de constancias
+
+def crear_constancia(db: Session, id_constancia: str, tipo: str, descripcion: str, requisitos: str):
+    nueva_constancia = Constancia(
+        ID_Constancia = f"CONS-{id_constancia}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        Tipo = tipo,
+        Descripcion = descripcion,
+        Requisitos = requisitos
     )
-    db.add(nueva_solicitud)
+    db.add(nueva_constancia)
     db.commit()
-    db.refresh(nueva_solicitud)
-    return nueva_solicitud
+    db.refresh(nueva_constancia)
+    return nueva_constancia
 
-def obtener_estado_constancia(db: Session, id_constancia: str):
-    solicitud = db.query(Solicitud).filter(Solicitud.ID_Constancia == id_constancia).order_by(Solicitud.Fecha_Solicitud.desc()).first()
+
+# Metodos para endpoints de solicitudes
+
+def crear_solicitud(db: Session, id_solicitud: str, no_control: str, id_constancia: str, fecha_folicitud: date, estado: str, fecha_entrega: date, id_trabajador: str):
+    try:
+        nueva_solicitud = Solicitud(
+            ID_Solicitud = f"SOLI-{id_solicitud}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+            No_Control = no_control,
+            ID_Constancia = id_constancia,
+            Fecha_Solicitud = fecha_folicitud,
+            Estado = estado,
+            Fecha_Entrega = fecha_entrega,
+            ID_Trabajador = id_trabajador
+        )
+        db.add(nueva_solicitud)
+        db.commit()
+        db.refresh(nueva_solicitud)
+
+        return nueva_solicitud
+    except Exception as ex:
+        db.rollback()
+        print(f"Error al crear la solicitud: {ex}")
+        return None
+
+
+def obtener_estado_constancia(db: Session, id_solicitud: str):
+    solicitud = db.query(Solicitud).filter(Solicitud.ID_Solicitud == id_solicitud).order_by(Solicitud.Fecha_Solicitud.desc()).first()
     if solicitud:
         return solicitud.Estado
     return None
 
-def actualizar_estado_constancia(db: Session, id_solicitud:str, nuevo_estado: str):
+
+def actualizar_estado_solicitud(db: Session, id_solicitud:str, nuevo_estado: str):
     solicitud = db.query(Solicitud).filter(Solicitud.ID_Solicitud == id_solicitud).first()
     if solicitud:
         estado_anterior = solicitud.Estado
         solicitud.Estado = nuevo_estado
-        db.commit()
-        db.refresh(solicitud)
 
         # Registrar el cambio en el historial
         historial = HistorialSolicitud(
-            ID_Historial = f"HIST-{id_solicitud}-{int(date.today().strftime('%Y%m%d%H%M%S'))}",
+            ID_Historial = f"HIST-{id_solicitud}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
             ID_Solicitud = id_solicitud,
             Estado_Anterior = estado_anterior,
             Estado_Actual = nuevo_estado,
@@ -76,9 +101,11 @@ def actualizar_estado_constancia(db: Session, id_solicitud:str, nuevo_estado: st
         )
         db.add(historial)
         db.commit()
+        db.refresh(solicitud)
         db.refresh(historial)
         return solicitud
     return None
+
 
 def consultar_historial_solicitudes(db: Session, no_control: str):
     solicitudes = db.query(Solicitud).filter(Solicitud.No_Control == no_control).all()

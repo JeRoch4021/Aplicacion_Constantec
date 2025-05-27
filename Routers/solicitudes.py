@@ -13,23 +13,24 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=schemas.SolicitudSalida)
-def registrar_solicitud(solicitud: schemas.CrearSolicitud, db: Session = Depends(get_db)):
-    return crud_estudiante(db, solicitud)
+@router.post("/crear-solicitud", response_model=schemas.SolicitudSalida)
+def registrar_solicitud(data: schemas.SolicitudBase, db: Session = Depends(get_db)):
+    solicitutd = crud_estudiante.crear_solicitud(db, data.ID_Solicitud, data.No_Control, data.ID_Constancia, data.Fecha_Solicitud, data.Estado, data.Fecha_Entrega, data.ID_Trabajador)
+    return solicitutd
 
-@router.get("/estado")
-def obtener_estado_constancia(id_estudiante: str, id_constancia: str, db: Session = Depends(get_db)):
-    estado = crud_estudiante.obtener_estado_constancia(db, id_estudiante, id_constancia)
+@router.post("/estado")
+def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depends(get_db)):
+    estado = crud_estudiante.obtener_estado_constancia(db, data.ID_Solicitud)
     if not estado:
         raise HTTPException(detail="Constancia no encontrada", status_code=404)
-    return {"estado actual": estado}
+    return {"Estado: ": estado}
 
 @router.put("/actualizar-estado")
-def actualizar_estado(id_solicitud: str, nuevo_estado: str, db: Session = Depends(get_db)):
-    solicitud = crud_estudiante.actualizar_estado_constancia(db, id_solicitud, nuevo_estado)
+def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(get_db)):
+    solicitud = crud_estudiante.actualizar_estado_solicitud(db, data.ID_Solicitud, data.Nuevo_Estado)
     if not solicitud:
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
-    return {"mensaje": f"Estado actualizado a {nuevo_estado}"}
+    return {"mensaje": f"Estado actualizado a {data.Nuevo_Estado}"}
 
 @router.get("/historial/{id_estudiante}", response_model=list[schemas.HistorialSolicitudSalida])
 def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db)):

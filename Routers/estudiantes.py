@@ -34,7 +34,7 @@ def get_db():
 #         raise HTTPException (detail=f"Error al iniciar sesión: {str(ex)}", status_code=500)
 
 @router.post("/login", response_model=Response)
-async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db: Session = Depends(get_db)):
+async def login_estudiante(estudiante_login: schemas.EstudiantesLogin, db: Session = Depends(get_db)):
     """
     Authenticates a user with username and password and returns a JWT.
     Client should send credentials as 'application/x-www-form-urlencoded'.
@@ -61,15 +61,15 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
 
 
 @router.put("/cambiar-contrasena", response_model=schemas.EstudiantesSalida)
-def cambiar_contrasena(no_control: str, nueva_contrasena: str, db: Session = Depends(get_db)):
-    estudiante_actualizado = crud_estudiante.actualizar_contrasena(db, no_control, nueva_contrasena)
+def cambiar_contrasena(data: schemas.EstudiantesContrasenaUpdate, db: Session = Depends(get_db)):
+    estudiante_actualizado = crud_estudiante.actualizar_contrasena(db, data.No_Control, data.Nueva_Contrasena)
     if not estudiante_actualizado:
         raise HTTPException (detail="Estudiante no encontrado", status_code=404)
     return estudiante_actualizado
 
 
 @router.get("/{no_control}", response_model=schemas.EstudiantesSalida)
-def obtener_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
+def buscar_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, no_control)
     if not estudiante:
         raise HTTPException (detail="Estudiante no encontrado", status_code=404)
@@ -78,4 +78,16 @@ def obtener_perfil(no_control: str, db: Session = Depends(get_db), auth_user: di
         raise HTTPException (detail="No de control no coincide con el estudiante", status_code=404)
     
     return estudiante
+
+
+@router.get("/", response_model=list[schemas.EstudiantesSalida])
+def listar_estudiantes (db: Session = Depends(get_db)):
+    estudiante = crud_estudiante.listar_estudiantes(db)
+
+    if not estudiante:
+        raise HTTPException (detail="Estudiantes no encontrados", status_code=404)
+    
+    return estudiante
+    
+
 

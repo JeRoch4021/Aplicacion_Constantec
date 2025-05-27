@@ -50,8 +50,12 @@ class SolicitudBase(BaseModel):
     Fecha_Entrega: Optional[date] = None
     ID_Trabajador: str
 
-class CrearSolicitud(SolicitudBase):
-    pass
+class SolicitudEstado(BaseModel):
+    ID_Solicitud: str
+
+class SolicitudNuevoEstado(BaseModel):
+    ID_Solicitud: str
+    Nuevo_Estado: str
 
 class SolicitudSalida(SolicitudBase):
     class Config:

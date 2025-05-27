@@ -23,7 +23,7 @@ class Estudiantes(Base):
 class Constancia(Base):
     __tablename__ = "Constancias"
 
-    ID_Constancia = Column(String(10), primary_key=True, index=True)
+    ID_Constancia = Column(String(30), primary_key=True, index=True)
     Tipo = Column(String(100), nullable=False)
     Descripcion = Column(String, nullable=False)
     Requisitos = Column(String, nullable=False)
@@ -34,13 +34,13 @@ class Constancia(Base):
 class Solicitud(Base):
     __tablename__ = "Solicitudes"
 
-    ID_Solicitud = Column(String(10), primary_key=True, index=True)
-    No_Control = Column(String(10), ForeignKey("Estudiantes.No_Control"), nullable=False)
-    ID_Constancia = Column(String(10), ForeignKey("Constancias.ID_Constancia"), nullable=False)
+    ID_Solicitud = Column(String(30), primary_key=True, index=True)
+    No_Control = Column(String(20), ForeignKey("Estudiantes.No_Control"), nullable=False)
+    ID_Constancia = Column(String(30), ForeignKey("Constancias.ID_Constancia"), nullable=False)
     Fecha_Solicitud = Column(Date, nullable=False)
     Estado = Column(String(50), nullable=False)
     Fecha_Entrega = Column(Date, nullable=True)
-    ID_Trabajador = Column(String(10), ForeignKey("Trabajadores.ID_Trabajador"), nullable=False)
+    ID_Trabajador = Column(String(30), ForeignKey("Trabajadores.ID_Trabajador"), nullable=False)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancia", back_populates="solicitudes")
@@ -51,8 +51,8 @@ class Solicitud(Base):
 class HistorialSolicitud(Base):
     __tablename__ = "Historial_Solicitudes"
 
-    ID_Historial = Column(String(10), primary_key=True, index=True)
-    ID_Solicitud = Column(String(10), ForeignKey("Solicitudes.ID_Solicitud"), nullable=False)
+    ID_Historial = Column(String(30), primary_key=True, index=True)
+    ID_Solicitud = Column(String(30), ForeignKey("Solicitudes.ID_Solicitud"), nullable=False)
     Estado_Anterior = Column(String(50), nullable=False)
     Estado_Actual = Column(String(50), nullable=False)
     Fecha_Cambio = Column(Date, nullable=False)
@@ -63,7 +63,7 @@ class HistorialSolicitud(Base):
 class Trabajador(Base):
     __tablename__ = "Trabajadores"
 
-    ID_Trabajador = Column(String(10), primary_key=True, index=True)
+    ID_Trabajador = Column(String(30), primary_key=True, index=True)
     Nombre = Column(String(100), nullable=False)
     Apellidos = Column(String(100), nullable=False)
     Fecha_Nacimiento = Column(Date, nullable=False)
