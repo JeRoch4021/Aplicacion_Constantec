@@ -17,7 +17,7 @@ def get_db():
 
 @router.post("/crear-constancia", response_model=schemas.ConstanciaSalida)
 def registrar_constancia(data: schemas.ConstanciaBase, db: Session = Depends(get_db)):
-    constancia = crud_estudiante.crear_constancia(db, data.ID_Constancia, data.Tipo, data.Descripcion, data.Requisitos)
+    constancia = crud_estudiante.crear_constancia(db, data.Tipo, data.Descripcion, data.Requisitos)
     return constancia
 
 @router.get("/", response_model=list[schemas.ConstanciaSalida])

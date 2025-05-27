@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+black
+isort
+sqlalchemy
+Schemas
+pydantic
+typing
+datetime

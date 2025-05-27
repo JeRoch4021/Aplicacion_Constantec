@@ -30,7 +30,6 @@ class EstudiantesSalida(EstudianteBase):
 # Constancias
 
 class ConstanciaBase(BaseModel):
-    ID_Constancia: str
     Tipo: str
     Descripcion: str
     Requisitos: str
@@ -42,16 +41,15 @@ class ConstanciaSalida(ConstanciaBase):
 # Solicitudes
 
 class SolicitudBase(BaseModel):
-    ID_Solicitud: str
     No_Control: str
-    ID_Constancia: str
+    ID_Constancia: int
     Fecha_Solicitud: date
     Estado: str
     Fecha_Entrega: Optional[date] = None
     ID_Trabajador: str
 
 class SolicitudEstado(BaseModel):
-    ID_Solicitud: str
+    ID_Solicitud: int
 
 class SolicitudNuevoEstado(BaseModel):
     ID_Solicitud: str

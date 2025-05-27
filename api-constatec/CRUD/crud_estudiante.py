@@ -41,9 +41,8 @@ def listar_estudiantes(db: Session):
 
 # Métodos para el endpoint de constancias
 
-def crear_constancia(db: Session, id_constancia: str, tipo: str, descripcion: str, requisitos: str):
+def crear_constancia(db: Session, tipo: str, descripcion: str, requisitos: str):
     nueva_constancia = Constancia(
-        ID_Constancia = f"CONS-{id_constancia}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
         Tipo = tipo,
         Descripcion = descripcion,
         Requisitos = requisitos
@@ -56,10 +55,9 @@ def crear_constancia(db: Session, id_constancia: str, tipo: str, descripcion: st
 
 # Metodos para endpoints de solicitudes
 
-def crear_solicitud(db: Session, id_solicitud: str, no_control: str, id_constancia: str, fecha_folicitud: date, estado: str, fecha_entrega: date, id_trabajador: str):
+def crear_solicitud(db: Session, no_control: str, id_constancia: str, fecha_folicitud: date, estado: str, fecha_entrega: date, id_trabajador: str):
     try:
         nueva_solicitud = Solicitud(
-            ID_Solicitud = f"SOLI-{id_solicitud}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
             No_Control = no_control,
             ID_Constancia = id_constancia,
             Fecha_Solicitud = fecha_folicitud,

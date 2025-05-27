@@ -23,7 +23,7 @@ class Estudiantes(Base):
 class Constancia(Base):
     __tablename__ = "Constancias"
 
-    ID_Constancia = Column(String(30), primary_key=True, index=True)
+    ID_Constancia = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Tipo = Column(String(100), nullable=False)
     Descripcion = Column(String, nullable=False)
     Requisitos = Column(String, nullable=False)
@@ -34,9 +34,9 @@ class Constancia(Base):
 class Solicitud(Base):
     __tablename__ = "Solicitudes"
 
-    ID_Solicitud = Column(String(30), primary_key=True, index=True)
+    ID_Solicitud = Column(Integer, primary_key=True, index=True, autoincrement=True)
     No_Control = Column(String(20), ForeignKey("Estudiantes.No_Control"), nullable=False)
-    ID_Constancia = Column(String(30), ForeignKey("Constancias.ID_Constancia"), nullable=False)
+    ID_Constancia = Column(Integer, ForeignKey("Constancias.ID_Constancia"), nullable=False)
     Fecha_Solicitud = Column(Date, nullable=False)
     Estado = Column(String(50), nullable=False)
     Fecha_Entrega = Column(Date, nullable=True)
@@ -51,7 +51,7 @@ class Solicitud(Base):
 class HistorialSolicitud(Base):
     __tablename__ = "Historial_Solicitudes"
 
-    ID_Historial = Column(String(30), primary_key=True, index=True)
+    ID_Historial = Column(Integer, primary_key=True, index=True, autoincrement=True)
     ID_Solicitud = Column(String(30), ForeignKey("Solicitudes.ID_Solicitud"), nullable=False)
     Estado_Anterior = Column(String(50), nullable=False)
     Estado_Actual = Column(String(50), nullable=False)
