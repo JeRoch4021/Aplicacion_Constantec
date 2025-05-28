@@ -7,3 +7,6 @@ Schemas
 pydantic
 typing
 datetime
+pyodbc
+passlib[bcrypt]
+python-jose[cryptography]
