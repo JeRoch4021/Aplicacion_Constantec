@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-import bcrypt
 from sqlalchemy.orm import Session
 from Database.database import SessionLocal
 from CRUD import crud_estudiante
