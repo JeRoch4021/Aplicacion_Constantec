@@ -4,7 +4,6 @@ from typing import Dict, Any, Optional, Annotated
 from fastapi import Depends, HTTPException, status
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from Comun.response import Response
 from fastapi.security import OAuth2PasswordBearer
 
 SECRET_KEY = "your-very-secret-key-that-should-be-long-and-random"

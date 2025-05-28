@@ -1,46 +1,47 @@
 from sqlalchemy import Column, String, Integer, Date, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from Database.database import Base
+from sqlalchemy.orm import declarative_base
 
+Base = declarative_base()
 
 class Estudiantes(Base):
-    __tablename__ = "Estudiantes"
+    __tablename__ = "estudiantes"
     
-    No_Control = Column(String(20), primary_key=True, index=True)
-    Nombre = Column(String(100), nullable=False)
-    Apellidos = Column(String(100), nullable=False)
-    Fecha_Nacimiento = Column(Date, nullable=False)
-    Edad = Column(Integer, nullable=False)
-    Municipio = Column(String(100), nullable=False)
-    Correo_Institucional = Column(String(150), unique=True, nullable=False)
-    Fecha_Registro = Column(Date, nullable=False)
-    Contrasena = Column(String(255), nullable=False)
-    Primer_Ingreso = Column(Boolean, default=True)
+    no_control = Column(String(20), primary_key=True, index=True)
+    nombre = Column(String(100), nullable=False)
+    apellidos = Column(String(100), nullable=False)
+    fecha_nacimiento = Column(Date, nullable=False)
+    edad = Column(Integer, nullable=False)
+    municipio = Column(String(100), nullable=False)
+    correo_institucional = Column(String(150), unique=True, nullable=False)
+    fecha_registro = Column(Date, nullable=False)
+    contrasena = Column(String(255), nullable=False)
+    primer_ingreso = Column(Boolean, default=True)
 
     solicitudes = relationship("Solicitud", back_populates="estudiante")
 
 
 class Constancia(Base):
-    __tablename__ = "Constancias"
+    __tablename__ = "constancias"
 
-    ID_Constancia = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    Tipo = Column(String(100), nullable=False)
-    Descripcion = Column(String, nullable=False)
-    Requisitos = Column(String, nullable=False)
+    id_constancia = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    tipo = Column(String(100), nullable=False)
+    descripcion = Column(String, nullable=False)
+    requisitos = Column(String, nullable=False)
 
     solicitudes = relationship("Solicitud", back_populates="constancia")
 
 
 class Solicitud(Base):
-    __tablename__ = "Solicitudes"
+    __tablename__ = "solicitudes"
 
-    ID_Solicitud = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    No_Control = Column(String(20), ForeignKey("Estudiantes.No_Control"), nullable=False)
-    ID_Constancia = Column(Integer, ForeignKey("Constancias.ID_Constancia"), nullable=False)
-    Fecha_Solicitud = Column(Date, nullable=False)
-    Estado = Column(String(50), nullable=False)
-    Fecha_Entrega = Column(Date, nullable=True)
-    ID_Trabajador = Column(String(30), ForeignKey("Trabajadores.ID_Trabajador"), nullable=False)
+    id_solicitud = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    no_control = Column(String(20), ForeignKey("estudiantes.no_control"), nullable=False)
+    id_constancia = Column(Integer, ForeignKey("constancias.id_constancia"), nullable=False)
+    fecha_solicitud = Column(Date, nullable=False)
+    estado = Column(String(50), nullable=False)
+    fecha_entrega = Column(Date, nullable=True)
+    id_trabajador = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancia", back_populates="solicitudes")
@@ -49,28 +50,28 @@ class Solicitud(Base):
 
 
 class HistorialSolicitud(Base):
-    __tablename__ = "Historial_Solicitudes"
+    __tablename__ = "historial_solicitudes"
 
-    ID_Historial = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    ID_Solicitud = Column(String(30), ForeignKey("Solicitudes.ID_Solicitud"), nullable=False)
-    Estado_Anterior = Column(String(50), nullable=False)
-    Estado_Actual = Column(String(50), nullable=False)
-    Fecha_Cambio = Column(Date, nullable=False)
+    id_historial = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_solicitud = Column(Integer, ForeignKey("solicitudes.id_solicitud"), nullable=False)
+    estado_anterior = Column(String(50), nullable=False)
+    estado_actual = Column(String(50), nullable=False)
+    fecha_cambio = Column(Date, nullable=False)
 
     solicitud = relationship("Solicitud", back_populates="historial")
 
 
 class Trabajador(Base):
-    __tablename__ = "Trabajadores"
+    __tablename__ = "trabajadores"
 
-    ID_Trabajador = Column(String(30), primary_key=True, index=True)
-    Nombre = Column(String(100), nullable=False)
-    Apellidos = Column(String(100), nullable=False)
-    Fecha_Nacimiento = Column(Date, nullable=False)
-    Edad = Column(Integer, nullable=False)
-    Cargo = Column(String(100), nullable=False)
-    Telefono = Column(String(20), nullable=False)
-    Correo_Institucional = Column(String(150), unique=True, nullable=False)
-    Fecha_Inicio = Column(Date, nullable=False)
+    id_trabajador = Column(String(30), primary_key=True, index=True)
+    nombre = Column(String(100), nullable=False)
+    apellidos = Column(String(100), nullable=False)
+    fecha_nacimiento = Column(Date, nullable=False)
+    edad = Column(Integer, nullable=False)
+    cargo = Column(String(100), nullable=False)
+    telefono = Column(String(20), nullable=False)
+    correo_institucional = Column(String(150), unique=True, nullable=False)
+    fecha_inicio = Column(Date, nullable=False)
 
     solicitudes = relationship("Solicitud", back_populates="trabajador")

@@ -2,11 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 import logging
+from .init_db import init_db
+from Models.models import Base
 
-# server = 'localhost,1434'
-# database = 'Seguimiento_Constancias'
-# username = 'SA'
-# password = 'Jeshua21SQL'
+logger = logging.getLogger(__name__)
+
 driver = 'ODBC Driver 18 for SQL Server'
 
 DB_HOST = os.getenv('DB_HOST', '')
@@ -15,7 +15,7 @@ DB_USER = os.getenv('DB_USER', '')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 DB_NAME = os.getenv('DB_NAME', '')
 
-logging.debug(f"""
+logger.debug(f"""
     DB_HOST: {DB_HOST}
     DB_PORT: {DB_PORT}
     DB_USER: {DB_USER}
@@ -27,22 +27,14 @@ database_url = (
     f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
     f"?driver={driver.replace(' ', '+')}&TrustServerCertificate=yes&Encrypt=yes"
     )
-engine = None
+
 
 try:
-    engine = create_engine(database_url)
-except Exception as e:
-    logging.debug(e)
-
-logging.debug(engine)
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
-
-try:
+    engine = create_engine(database_url)    
+    SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    Base.metadata.create_all(engine)
     with engine.connect() as connexion: 
-        print("Conexión exitosa a la base de datos")
-
-except Exception as ex:
-    print("Error al conectar la base de datos: ", ex)
-
+        logger.info("Conexión exitosa a la base de datos")
+except Exception as e:
+    logger.warning("Error al conectar la base de datos: ", e)
 
