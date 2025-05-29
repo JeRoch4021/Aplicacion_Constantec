@@ -14,8 +14,9 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=schemas.SolicitudSalida)
-def registrar_solicitud(data: schemas.SolicitudBase, db: Session = Depends(get_db)):
-    solicitutd = crud_estudiante.crear_solicitud(db, data.ID_Solicitud, data.No_Control, data.ID_Constancia, data.Fecha_Solicitud, data.Estado, data.Fecha_Entrega, data.ID_Trabajador)
+def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, data_solicitud: schemas.SolicitudBase, db: Session = Depends(get_db)):
+    constancia_id = crud_estudiante.crear_constancia(db, data_constancia.id_estudiante, data_constancia.descripcion, data_constancia.otros, data_constancia.constancia_opciones)
+    solicitutd = crud_estudiante.crear_solicitud(db, data_solicitud.estudiantes_id, constancia_id, data_solicitud.solicitud_estatus_id, data_solicitud.fecha_solicitud, data_solicitud.fecha_entrega)
     return solicitutd
 
 @router.post("/estado")

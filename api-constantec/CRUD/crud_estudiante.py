@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 #from Models.security import cifrar_contrasena
-from Models.models import Estudiantes, Solicitudes, Constancias
+from Models.models import Estudiantes, Solicitudes, Constancias, ConstanciaOpciones
 from datetime import date, datetime
 from Autenticacion.seguridad import get_password_hash
 from sqlalchemy.orm import joinedload
@@ -45,32 +45,42 @@ def listar_estudiantes(db: Session):
 
 # Métodos para el endpoint de constancias
 
-def crear_constancia(db: Session, tipo: str, descripcion: str, requisitos: str):
+def crear_constancia(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos_ids: list[int]):
     # 1. crear constancia y guardar el id
-    # 2. insertar todos los constancia opciones por cada opcion q selecciono el usuario
+    # 2. insertar todos las constancia opciones por cada opcion q selecciono el usuario
     # 3. insertar en solicitudes
     nueva_constancia = Constancias(
-        Tipo = tipo,
-        Descripcion = descripcion,
-        Requisitos = requisitos
+        id_estudiante = id_estudiante,
+        descripcion = descripcion,
+        otros = otros
     )
     db.add(nueva_constancia)
     db.commit()
     db.refresh(nueva_constancia)
-    return nueva_constancia
+
+    for tipo_id in tipos_ids:
+        opcion = ConstanciaOpciones(
+            constancia_id = nueva_constancia.id,
+            constancias_tipo_id = tipo_id
+
+        )
+        db.add(opcion)
+    db.commit()
+
+    return nueva_constancia.id
 
 
 # Metodos para endpoints de solicitudes
 
-def crear_solicitud(db: Session, no_control: str, id_constancia: str, fecha_folicitud: date, estado: str, fecha_entrega: date, id_trabajador: str):
+def crear_solicitud(db: Session, estudiantes_id: int, constancia_id: int, solicitud_estatus_id: int, fecha_solicitud: date, fecha_entrega: date):
     try:
         nueva_solicitud = Solicitudes(
-            No_Control = no_control,
-            ID_Constancia = id_constancia,
-            Fecha_Solicitud = fecha_folicitud,
-            Estado = estado,
-            Fecha_Entrega = fecha_entrega,
-            ID_Trabajador = id_trabajador
+            estudiantes_id = estudiantes_id,
+            constancia_id = constancia_id,
+            solicitud_estatus_id = solicitud_estatus_id,
+            fecha_solicitud = fecha_solicitud,
+            fecha_entrega = fecha_entrega,
+            #id_trabajador = id_trabajador
         )
         db.add(nueva_solicitud)
         db.commit()

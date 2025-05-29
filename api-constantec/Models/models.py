@@ -37,6 +37,7 @@ class ConstanciaOpciones(Base):
     constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
     constancias_tipo_id = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
 
+
 class Constancias(Base):
     __tablename__ = "constancias"
 
@@ -45,6 +46,7 @@ class Constancias(Base):
     otros = Column(String(100), nullable=True)
 
     solicitudes = relationship("Solicitudes", back_populates="constancia")
+
 
 class SolicitudEstatus(Base):
     __tablename__ = "solicitud_estatus"
@@ -65,11 +67,14 @@ class Solicitudes(Base):
     solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
     fecha_solicitud = Column(Date, nullable=False)
     fecha_entrega = Column(Date, nullable=True)
+    # trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancias", back_populates="solicitudes")
     estatus = relationship("SolicitudEstatus", back_populates="solicitudes")
+    # trabajador = relationship("Trabajador", back_populates="solicitudes")
  
+
 class Trabajador(Base):
     __tablename__ = "trabajadores"
 
