@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 #from Models.security import cifrar_contrasena
@@ -6,8 +7,16 @@ from datetime import date, datetime
 from Autenticacion.seguridad import get_password_hash
 from sqlalchemy.orm import joinedload
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+from enum import Enum
+
+class SolicitudEstatus(Enum):
+    PENDIENTE = 1
+    REVISION = 2  
+    COMPLETO = 3
 
 
 # def crear_estudiante(db: Session, estudiante: schemas.EstudianteBase):
@@ -45,53 +54,38 @@ def listar_estudiantes(db: Session):
 
 # Métodos para el endpoint de constancias
 
-def crear_constancia(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos_ids: list[int]):
-    # 1. crear constancia y guardar el id
-    # 2. insertar todos las constancia opciones por cada opcion q selecciono el usuario
-    # 3. insertar en solicitudes
-    nueva_constancia = Constancias(
-        id_estudiante = id_estudiante,
-        descripcion = descripcion,
-        otros = otros
-    )
-    db.add(nueva_constancia)
-    db.commit()
-    db.refresh(nueva_constancia)
-
-    for tipo_id in tipos_ids:
-        opcion = ConstanciaOpciones(
-            constancia_id = nueva_constancia.id,
-            constancias_tipo_id = tipo_id
-
-        )
-        db.add(opcion)
-    db.commit()
-
-    return nueva_constancia.id
-
-
-# Metodos para endpoints de solicitudes
-
-def crear_solicitud(db: Session, estudiantes_id: int, constancia_id: int, solicitud_estatus_id: int, fecha_solicitud: date, fecha_entrega: date):
+def crear_solicitud(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos_ids: list[int]):
     try:
-        nueva_solicitud = Solicitudes(
-            estudiantes_id = estudiantes_id,
-            constancia_id = constancia_id,
-            solicitud_estatus_id = solicitud_estatus_id,
-            fecha_solicitud = fecha_solicitud,
-            fecha_entrega = fecha_entrega,
-            #id_trabajador = id_trabajador
+        nueva_constancia = Constancias(
+            descripcion = descripcion,
+            otros = otros
         )
+        
+        db.add(nueva_constancia)
+        db.flush()
+        
+        for tipo_id in tipos_ids:
+            opcion = ConstanciaOpciones(
+                constancia_id = nueva_constancia.id,
+                constancias_tipo_id = tipo_id
+            )
+            db.add(opcion)
+
+        nueva_solicitud = Solicitudes(
+            estudiantes_id = id_estudiante,
+            constancia_id = nueva_constancia.id,
+            solicitud_estatus_id = SolicitudEstatus.PENDIENTE.value,
+        )
+
         db.add(nueva_solicitud)
-        db.commit()
-        db.refresh(nueva_solicitud)
-
-        return nueva_solicitud
     except Exception as ex:
+        logger.debug(ex)
         db.rollback()
-        print(f"Error al crear la solicitud: {ex}")
-        return None
+        raise HTTPException(status_code=500, detail="Ocurrio un error al generar la solicitud de la constancia");
+    finally:
+        db.commit()
 
+    return nueva_solicitud
 
 def obtener_estado_constancia(db: Session, id_solicitud: str):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).order_by(Solicitudes.Fecha_Solicitud.desc()).first()
@@ -124,7 +118,6 @@ def actualizar_estado_solicitud(db: Session, id_solicitud:str, nuevo_estado: str
 
 def obtener_solicitudes(db: Session, estudiante_id: str):
     solicitudes = db.query(Solicitudes).options(joinedload(Solicitudes.estatus)).filter(Solicitudes.estudiantes_id == estudiante_id).all()
-    logging.debug(print(solicitudes))
     return solicitudes
 
     

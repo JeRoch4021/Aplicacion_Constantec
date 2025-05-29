@@ -1,10 +1,26 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from datetime import date
+
+class ConstanciaTiposSchema(BaseModel):
+    id: int
+    tipo: str
+    descripcion: str
+
+    class Config:
+        orm_mode = True
+
+class ConstanciaOpcionesSchema(BaseModel):
+    id: int
+    tipo: ConstanciaTiposSchema 
+
+    class Config:
+        orm_mode = True
 
 class ConstanciaSchema(BaseModel):
     descripcion: Optional[str] = None
     otros: Optional[str] = None
+    opciones: List[ConstanciaOpcionesSchema] = []
 
 class EstudianteSchema(BaseModel):
     no_control: str
@@ -14,8 +30,6 @@ class EstudianteSchema(BaseModel):
     edad: int
     municipio: str
     correo_institucional: str
-    fecha_registro: date
-    primer_ingreso: Optional[bool] = True
 
 class SolicitudEstatusSchema(BaseModel):
     id: int
@@ -26,13 +40,8 @@ class SolicitudEstatusSchema(BaseModel):
         orm_mode = True
 
 class SolicitudSchema(BaseModel):
-    id: int
-    # estudiantes_id: int
-    # constancia_id: int
-    # solicitud_estatus_id: int
     fecha_solicitud: date
-    fecha_entrega: Optional[date]
-    estatus: SolicitudEstatusSchema  # <- nested schema here
+    estatus: SolicitudEstatusSchema
     estudiante: EstudianteSchema
     constancia: ConstanciaSchema
 

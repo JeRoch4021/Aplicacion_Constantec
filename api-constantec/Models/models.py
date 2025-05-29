@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import declarative_base
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -37,6 +38,8 @@ class ConstanciaOpciones(Base):
     constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
     constancias_tipo_id = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
 
+    tipo = relationship("ConstanciaTipos", backref="opciones")
+
 
 class Constancias(Base):
     __tablename__ = "constancias"
@@ -46,6 +49,7 @@ class Constancias(Base):
     otros = Column(String(100), nullable=True)
 
     solicitudes = relationship("Solicitudes", back_populates="constancia")
+    opciones = relationship("ConstanciaOpciones", backref="constancia")
 
 
 class SolicitudEstatus(Base):
@@ -65,7 +69,7 @@ class Solicitudes(Base):
     estudiantes_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
     constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
     solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
-    fecha_solicitud = Column(Date, nullable=False)
+    fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
     fecha_entrega = Column(Date, nullable=True)
     # trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
 

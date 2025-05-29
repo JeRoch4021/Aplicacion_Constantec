@@ -13,16 +13,18 @@ INSERT INTO constancia_tipos VALUES
 ('Constancia de Pago', 'Documento que acredita que el estudiante ha realizado el pago correspondiente a su inscripción o colegiatura. Incluye detalles como el monto pagado, la fecha de pago y el semestre o ciclo escolar al que corresponde dicho pago.'),
 ('Constancia Personalizada', 'Descripción personalizada ingresada por el estudiante desde la aplicación web.');
 
+INSERT INTO solicitud_estatus VALUES 
+('pendiente', 'La solicitud esta pendiente' ),
+('revisión', 'La solicitud esta en revision' ),
+('completo', 'La constancia esta lista' );
+
 insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) 
 values ('Rocha Sainez', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '22240302@leon.tecnm.mx', 18, '1983-07-04T00:00:00.000Z', '2025-05-29T00:00:00.000Z', 'Justinfurt', '22240302', 'Jeshua', 0)
 
 insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) 
 values ('Martinez Sanchez', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '33340302@leon.tecnm.mx', 18, '1983-07-04T00:00:00.000Z', '2025-05-29T00:00:00.000Z', 'Leon', '33340302', 'Oscar', 0)
 
-INSERT INTO solicitud_estatus VALUES 
-('pendiente', 'La solicitud esta pendiente' ),
-('revisión', 'La solicitud esta en revision' ),
-('completo', 'La constancia esta lista' );
+
 
 // para jeshua
 insert into constancias values
