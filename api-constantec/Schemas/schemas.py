@@ -2,18 +2,52 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date
 
-# Estudiantes
+class ConstanciaSchema(BaseModel):
+    descripcion: Optional[str] = None
+    otros: Optional[str] = None
+class EstudianteSchema(BaseModel):
+    no_control: str
+    nombre: str
+    apellidos: str
+    fecha_nacimiento: date
+    edad: int
+    municipio: str
+    correo_institucional: str
+    fecha_registro: date
+    primer_ingreso: Optional[bool] = True
+
+class SolicitudEstatusSchema(BaseModel):
+    id: int
+    tipo: str
+    descripcion: str
+
+    class Config:
+        orm_mode = True
+
+class SolicitudSchema(BaseModel):
+    id: int
+    # estudiantes_id: int
+    # constancia_id: int
+    # solicitud_estatus_id: int
+    fecha_solicitud: date
+    fecha_entrega: Optional[date]
+    estatus: SolicitudEstatusSchema  # <- nested schema here
+    estudiante: EstudianteSchema
+    constancia: ConstanciaSchema
+
+    class Config:
+        orm_mode = True
 
 class EstudianteBase(BaseModel):
-    No_Control: str
-    Nombre: str
-    Apellidos: str
-    Fecha_Nacimiento: date
-    Edad: int
-    Municipio: str
-    Correo_Institucional: str
-    Fecha_Registro: date
-    Primer_Ingreso: Optional[bool] = True
+    no_control: str
+    nombre: str
+    apellidos: str
+    fecha_nacimiento: date
+    edad: int
+    municipio: str
+    correo_institucional: str
+    fecha_registro: date
+    primer_ingreso: Optional[bool] = True
 
 class EstudiantesLogin(BaseModel):
     No_Control: str
@@ -29,6 +63,12 @@ class EstudiantesSalida(EstudianteBase):
 
 # Constancias
 
+class CrearConstanciaRequest(BaseModel):
+    descripcion: str
+    otros: str
+    id_estudiante: int
+    constancia_opciones: list[int]
+
 class ConstanciaBase(BaseModel):
     Tipo: str
     Descripcion: str
@@ -39,6 +79,14 @@ class ConstanciaSalida(ConstanciaBase):
         orm_mode = True
 
 # Solicitudes
+
+class SolicitudPost(BaseModel):
+    No_Control: str
+    ID_Constancia: int
+    Fecha_Solicitud: date
+    Estado: str
+    Fecha_Entrega: Optional[date] = None
+    ID_Trabajador: str
 
 class SolicitudBase(BaseModel):
     No_Control: str

@@ -18,3 +18,13 @@ Nota: modificar la version del docker image
 ```shell
 Aplicacion_Constantec$ docker compose -f docker-compose-dev.yml up
 ```
+
+### Como el usuario admin
+```shell
+Aplicacion_Constantec$ docker exec -it constantec-dev /bin/bash
+$ ipython
+from Models.factories import EstudiantesFactory
+from Database.database import SessionLocal
+sesion = SessionLocal()
+EstudiantesFactory(no_control="22240302", nombre="Jeshua", apellidos="Rocha Sainez")
+```

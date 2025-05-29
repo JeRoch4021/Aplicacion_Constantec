@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 #from Models.security import cifrar_contrasena
-from Models.models import Estudiantes, Solicitud, Constancia, HistorialSolicitud
+from Models.models import Estudiantes, Solicitudes, Constancias
 from datetime import date, datetime
 from Autenticacion.seguridad import get_password_hash
+from sqlalchemy.orm import joinedload
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # def crear_estudiante(db: Session, estudiante: schemas.EstudianteBase):
@@ -42,7 +46,10 @@ def listar_estudiantes(db: Session):
 # Métodos para el endpoint de constancias
 
 def crear_constancia(db: Session, tipo: str, descripcion: str, requisitos: str):
-    nueva_constancia = Constancia(
+    # 1. crear constancia y guardar el id
+    # 2. insertar todos los constancia opciones por cada opcion q selecciono el usuario
+    # 3. insertar en solicitudes
+    nueva_constancia = Constancias(
         Tipo = tipo,
         Descripcion = descripcion,
         Requisitos = requisitos
@@ -57,7 +64,7 @@ def crear_constancia(db: Session, tipo: str, descripcion: str, requisitos: str):
 
 def crear_solicitud(db: Session, no_control: str, id_constancia: str, fecha_folicitud: date, estado: str, fecha_entrega: date, id_trabajador: str):
     try:
-        nueva_solicitud = Solicitud(
+        nueva_solicitud = Solicitudes(
             No_Control = no_control,
             ID_Constancia = id_constancia,
             Fecha_Solicitud = fecha_folicitud,
@@ -77,36 +84,37 @@ def crear_solicitud(db: Session, no_control: str, id_constancia: str, fecha_foli
 
 
 def obtener_estado_constancia(db: Session, id_solicitud: str):
-    solicitud = db.query(Solicitud).filter(Solicitud.ID_Solicitud == id_solicitud).order_by(Solicitud.Fecha_Solicitud.desc()).first()
+    solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).order_by(Solicitudes.Fecha_Solicitud.desc()).first()
     if solicitud:
         return solicitud.Estado
     return None
 
 
 def actualizar_estado_solicitud(db: Session, id_solicitud:str, nuevo_estado: str):
-    solicitud = db.query(Solicitud).filter(Solicitud.ID_Solicitud == id_solicitud).first()
+    solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
     if solicitud:
         estado_anterior = solicitud.Estado
         solicitud.Estado = nuevo_estado
 
         # Registrar el cambio en el historial
-        historial = HistorialSolicitud(
-            ID_Historial = f"HIST-{id_solicitud}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            ID_Solicitud = id_solicitud,
-            Estado_Anterior = estado_anterior,
-            Estado_Actual = nuevo_estado,
-            Fecha_Cambio = date.today()
-        )
-        db.add(historial)
+        # historial = HistorialSolicitud(
+        #     ID_Historial = f"HIST-{id_solicitud}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        #    .id = id_solicitud,
+        #     Estado_Anterior = estado_anterior,
+        #     Estado_Actual = nuevo_estado,
+        #     Fecha_Cambio = date.today()
+        # )
+        # db.add(historial)
         db.commit()
         db.refresh(solicitud)
-        db.refresh(historial)
+        # db.refresh(historial)
         return solicitud
     return None
 
 
-def consultar_historial_solicitudes(db: Session, no_control: str):
-    solicitudes = db.query(Solicitud).filter(Solicitud.No_Control == no_control).all()
+def obtener_solicitudes(db: Session, estudiante_id: str):
+    solicitudes = db.query(Solicitudes).options(joinedload(Solicitudes.estatus)).filter(Solicitudes.estudiantes_id == estudiante_id).all()
+    logging.debug(print(solicitudes))
     return solicitudes
 
     

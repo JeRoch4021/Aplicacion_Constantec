@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/crear-solicitud", response_model=schemas.SolicitudSalida)
+@router.post("/", response_model=schemas.SolicitudSalida)
 def registrar_solicitud(data: schemas.SolicitudBase, db: Session = Depends(get_db)):
     solicitutd = crud_estudiante.crear_solicitud(db, data.ID_Solicitud, data.No_Control, data.ID_Constancia, data.Fecha_Solicitud, data.Estado, data.Fecha_Entrega, data.ID_Trabajador)
     return solicitutd
@@ -32,6 +32,6 @@ def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
     return {"mensaje": f"Estado actualizado a {data.Nuevo_Estado}"}
 
-@router.get("/historial/{id_estudiante}", response_model=list[schemas.HistorialSolicitudSalida])
+@router.get("/{id_estudiante}", response_model=list[schemas.SolicitudSchema])
 def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db)):
-    return crud_estudiante.consultar_historial_solicitudes(db, id_estudiante)
+    return crud_estudiante.obtener_solicitudes(db, id_estudiante)

@@ -15,14 +15,6 @@ DB_USER = os.getenv('DB_USER', '')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 DB_NAME = os.getenv('DB_NAME', '')
 
-logger.debug(f"""
-    DB_HOST: {DB_HOST}
-    DB_PORT: {DB_PORT}
-    DB_USER: {DB_USER}
-    DB_PASSWORD: {DB_PASSWORD}
-    DB_NAME: {DB_NAME}
-             """)
-
 database_url = (
     f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
     f"?driver={driver.replace(' ', '+')}&TrustServerCertificate=yes&Encrypt=yes"

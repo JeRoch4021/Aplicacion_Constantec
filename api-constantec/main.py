@@ -1,15 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
-
-from sqlalchemy.orm import Session
-# from Database.database import SessionLocal
-# from CRUD import crud_estudiante
-# from Schemas import schemas
-from Database.init_db import init_db
-from contextlib import asynccontextmanager
 import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -20,20 +14,19 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite dev server default
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/assets", StaticFiles(directory="web-app/assets"), name="assets")
-
-# def get_db():
-#     db = SessionLocal()    
-#     try:
-#         yield db
-#     finally:
-#         db.close()
-
 
 @app.get("/")
 def iniciando_sesion():
     return FileResponse("web-app/index.html")
-    # return {"mensaje": "API de constancias activa. Usa /docs para ver la documentacion. :)"}
 
 from Routers import estudiantes, constancias, solicitudes, login
 
