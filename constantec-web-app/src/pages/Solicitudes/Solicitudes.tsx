@@ -42,7 +42,8 @@ export const Solicitudes = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {data &&
+          {Array.isArray(data) &&
+            data.length > 0 &&
             data.map((row) => (
               <Table.Row>
                 <Table.RowHeaderCell>
