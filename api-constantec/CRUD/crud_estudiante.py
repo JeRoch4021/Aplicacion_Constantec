@@ -33,7 +33,7 @@ class SolicitudEstatus(Enum):
 # Métodos para los endpoints de estudiantes
 
 def obtener_estudiante_por_no_control(db: Session, no_control: str):
-    return db.query(Estudiantes).filter(Estudiantes.No_Control == no_control).first()
+    return db.query(Estudiantes).filter(Estudiantes.no_control == no_control).first()
 
 def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
     estudiante = obtener_estudiante_por_no_control(db, no_control)

@@ -25,6 +25,9 @@ Aplicacion_Constantec$ docker exec -it constantec-dev /bin/bash
 $ ipython
 from Models.factories import EstudiantesFactory
 from Database.database import SessionLocal
+from Autenticacion.seguridad import get_password_hash
 sesion = SessionLocal()
+
 EstudiantesFactory(no_control="22240302", nombre="Jeshua", apellidos="Rocha Sainez")
+EstudiantesFactory(no_control="22240302", nombre="Jeshua", apellidos="Rocha Sainez", contrasena=get_password_hash("passworddiferente"))
 ```

@@ -12,12 +12,11 @@ const axiosClient = axios.create({
 // Optional: Add interceptors (for auth tokens, error handling, logging, etc.)
 axiosClient.interceptors.request.use(
   (config) => {
-    // Example: attach token
-    // const token = localStorage.getItem("token");
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
-    return config
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
   (error) => Promise.reject(error)
 )

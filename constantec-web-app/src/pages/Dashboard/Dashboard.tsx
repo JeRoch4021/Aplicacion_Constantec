@@ -2,16 +2,23 @@ import { Flex, Tabs, Separator, Button, Avatar, Text } from '@radix-ui/themes'
 import { Solicitudes } from '../Solicitudes'
 import { SolicitudFormulario } from '../SolicitudFormulario/SolicitudFormulario'
 import { useState } from 'react'
+import logo from '../../assets/images/constantec_logo.jpg'
+import profile from '../../assets/images/profile.png'
 
 export const Dashboard = () => {
   const [error, setError] = useState<string | null>(null)
+
+  const cerrarSession = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  }
 
   return (
     <>
       <Flex width="100%" align="center" justify="between" p="1">
         <Flex direction="row" align="center">
           <Avatar
-            src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+            src={logo}
             fallback="A"
           />
           <Text size="5" ml="2">
@@ -19,8 +26,11 @@ export const Dashboard = () => {
           </Text>
         </Flex>
         <Flex direction="row" align="center">
-          <Button>Perfil</Button>
-          <Button variant="soft" ml="2">
+          <Avatar
+            src={profile}
+            fallback="A"
+          />
+          <Button variant="soft" ml="2" onClick={cerrarSession}>
             Cerrar sesion
           </Button>
         </Flex>

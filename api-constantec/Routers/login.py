@@ -7,8 +7,11 @@ from Database.database import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
 from CRUD import crud_estudiante
 from typing import Any
-from Autenticacion.seguridad import verify_password, create_access_token
+from Autenticacion.seguridad import get_password_hash, verify_password, create_access_token
 from Comun.response import Response
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -27,14 +30,12 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
     Authenticates a user with username and password and returns a JWT.
     Client should send credentials as 'application/x-www-form-urlencoded'.
     """
-    # user = get_user_from_db(form_data.username)
     try: 
-        estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, estudiante_login.No_Control)
+        estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, estudiante_login.no_control)
         if estudiante is None:
-            
             raise HTTPException (detail="Usuario no encontrado", status_code=status.HTTP_404_NOT_FOUND)
-
-        if not verify_password(estudiante_login.Contrasena, estudiante.Contrasena):
+        logging.debug(estudiante.contrasena)
+        if not verify_password(estudiante_login.contrasena, estudiante.contrasena):
             raise HTTPException (detail="Password incorrecto", status_code=status.HTTP_401_UNAUTHORIZED)
         
     except Exception as ex:
@@ -60,8 +61,8 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
     # 3. User is authenticated, create the JWT
     # You can include additional data in the token if needed (the 'sub' claim is standard for subject/username)
     access_token_payload = {
-        "sub": estudiante.No_Control,
-        "name": estudiante.Nombre
+        "sub": estudiante.no_control,
+        "name": estudiante.nombre
     }
     access_token = create_access_token(jwt_payload=access_token_payload)
     return Response(data=dict(token= access_token), success= True, messsage="autenticacion exitosa", error_code= None)

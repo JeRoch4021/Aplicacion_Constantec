@@ -25,7 +25,7 @@ app.add_middleware(
 
 app.mount("/assets", StaticFiles(directory="web-app/assets"), name="assets")
 
-# app.include_router(login.router, prefix="/v1/login", tags=["Login"])
+app.include_router(login.router, prefix="/v1/login", tags=["Login"])
 app.include_router(estudiantes.router, prefix="/v1/estudiantes", tags=["Estudiantes"])
 app.include_router(constancias.router, prefix="/v1/constancias", tags=["Constancias"])
 app.include_router(solicitudes.router, prefix="/v1/solicitudes", tags=["Solicitudes"])

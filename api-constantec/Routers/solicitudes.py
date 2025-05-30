@@ -5,6 +5,8 @@ from CRUD import crud_estudiante
 from Schemas import schemas
 from Models.models import Solicitudes
 from sqlalchemy.orm import joinedload
+from typing import Any
+from Autenticacion.seguridad import get_current_user
 import logging
 
 
@@ -50,5 +52,5 @@ def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(
     return {"mensaje": f"Estado actualizado a {data.Nuevo_Estado}"}
 
 @router.get("/{id_estudiante}", response_model=list[schemas.SolicitudResponseSchema])
-def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db)):
+def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     return crud_estudiante.obtener_solicitudes(db, id_estudiante)

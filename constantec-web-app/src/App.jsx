@@ -4,9 +4,14 @@ import {
   createRoute,
   createRouter,
   Outlet,
+  redirect
 } from '@tanstack/react-router'
 // import './App.css'
-import { Login, Dashboard, Solicitudes } from './pages'
+import { Login, Dashboard } from './pages'
+
+const isAuthenticated = () => {
+  return !!localStorage.getItem('token');
+}
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -16,25 +21,29 @@ const LoginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Login,
+  beforeLoad: () => {
+    if (isAuthenticated()) {
+      throw redirect({ to: '/dashboard' });
+    }
+  }
 })
 
 const DashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dashboard',
   component: Dashboard,
-})
-
-const SolicitudesRoute = createRoute({
-  path: '/solicitudes',
-  getParentRoute: () => rootRoute,
-  component: Solicitudes,
+  beforeLoad: () => {
+    if (!isAuthenticated()) {
+      throw redirect({ to: '/' });
+    }
+  }
 })
 
 const routeTree = rootRoute.addChildren([
   LoginRoute,
   DashboardRoute,
-  SolicitudesRoute,
-])
+]);
+
 const router = createRouter({ routeTree })
 
 function App() {

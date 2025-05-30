@@ -70,8 +70,8 @@ class EstudianteBase(BaseModel):
     primer_ingreso: Optional[bool] = True
 
 class EstudiantesLogin(BaseModel):
-    No_Control: str
-    Contrasena: str
+    no_control: str
+    contrasena: str
 
 class EstudiantesContrasenaUpdate(BaseModel):
     No_Control: str
