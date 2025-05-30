@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Database.database import SessionLocal
+from Database.init_db import init_db
 from CRUD import crud_estudiante
 from Schemas import schemas
 from Autenticacion.seguridad import get_current_user
 from typing import Any
 from Autenticacion.seguridad import verify_password, create_access_token
 from Comun.response import Response
-
 
 router = APIRouter()
 

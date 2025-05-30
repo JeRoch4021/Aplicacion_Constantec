@@ -1,4 +1,8 @@
-:root {
+body {
+  overflow-y: hidden;
+}
+
+/* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -23,6 +27,7 @@ a:hover {
 }
 
 body {
+  overflow-y: hidden;
   margin: 0;
   display: flex;
   place-items: center;
@@ -65,4 +70,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */

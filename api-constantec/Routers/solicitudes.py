@@ -3,6 +3,14 @@ from sqlalchemy.orm import Session
 from Database.database import SessionLocal
 from CRUD import crud_estudiante
 from Schemas import schemas
+from Models.models import Solicitudes
+from sqlalchemy.orm import joinedload
+from typing import Any
+from Autenticacion.seguridad import get_current_user
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -13,10 +21,21 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/crear-solicitud", response_model=schemas.SolicitudSalida)
-def registrar_solicitud(data: schemas.SolicitudBase, db: Session = Depends(get_db)):
-    solicitutd = crud_estudiante.crear_solicitud(db, data.ID_Solicitud, data.No_Control, data.ID_Constancia, data.Fecha_Solicitud, data.Estado, data.Fecha_Entrega, data.ID_Trabajador)
-    return solicitutd
+@router.post("/", response_model=schemas.SolicitudRequestSchema)
+def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Session = Depends(get_db)):
+
+    if (getattr(data_constancia, "descripcion", None) is None or len(data_constancia.descripcion) == 0 ):
+        raise HTTPException(status_code=400, detail="No se puede crear una solicitud sin descripcion")
+
+    solicitud = crud_estudiante.crear_solicitud(db, data_constancia.id_estudiante, data_constancia.descripcion, data_constancia.otros, data_constancia.constancia_opciones)
+
+    response = db.query(Solicitudes).options(
+        joinedload(Solicitudes.estudiante),
+        joinedload(Solicitudes.constancia),
+        joinedload(Solicitudes.estatus),
+    ).filter(Solicitudes.id == solicitud.id).first()
+
+    return response
 
 @router.post("/estado")
 def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depends(get_db)):
@@ -32,6 +51,6 @@ def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
     return {"mensaje": f"Estado actualizado a {data.Nuevo_Estado}"}
 
-@router.get("/historial/{id_estudiante}", response_model=list[schemas.HistorialSolicitudSalida])
-def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db)):
-    return crud_estudiante.consultar_historial_solicitudes(db, id_estudiante)
+@router.get("/{id_estudiante}", response_model=list[schemas.SolicitudResponseSchema])
+def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
+    return crud_estudiante.obtener_solicitudes(db, id_estudiante)
