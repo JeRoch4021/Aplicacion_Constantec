@@ -30,7 +30,11 @@ const SolicitudesRoute = createRoute({
   component: Solicitudes,
 })
 
-const routeTree = rootRoute.addChildren([LoginRoute, DashboardRoute, SolicitudesRoute])
+const routeTree = rootRoute.addChildren([
+  LoginRoute,
+  DashboardRoute,
+  SolicitudesRoute,
+])
 const router = createRouter({ routeTree })
 
 function App() {

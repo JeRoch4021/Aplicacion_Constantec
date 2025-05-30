@@ -1,2 +1,2 @@
-export * from './Solicitudes';
-export * from './useGetSolicitudes';
+export * from './Solicitudes'
+export * from './useGetSolicitudes'

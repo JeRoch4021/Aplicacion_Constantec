@@ -1,1 +1,1 @@
-export * from './SolicitudFormulario';
+export * from './SolicitudFormulario'

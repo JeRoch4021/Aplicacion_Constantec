@@ -39,7 +39,17 @@ class SolicitudEstatusSchema(BaseModel):
     class Config:
         orm_mode = True
 
-class SolicitudSchema(BaseModel):
+class SolicitudRequestSchema(BaseModel):
+    fecha_solicitud: date
+    estatus: SolicitudEstatusSchema
+    estudiante: EstudianteSchema
+    constancia: ConstanciaSchema
+
+    class Config:
+        orm_mode = True
+
+class SolicitudResponseSchema(BaseModel):
+    fecha_entrega: Optional[date] = None
     fecha_solicitud: date
     estatus: SolicitudEstatusSchema
     estudiante: EstudianteSchema

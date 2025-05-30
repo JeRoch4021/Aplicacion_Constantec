@@ -19,10 +19,14 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=schemas.SolicitudSchema)
+@router.post("/", response_model=schemas.SolicitudRequestSchema)
 def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Session = Depends(get_db)):
+
+    if (getattr(data_constancia, "descripcion", None) is None or len(data_constancia.descripcion) == 0 ):
+        raise HTTPException(status_code=400, detail="No se puede crear una solicitud sin descripcion")
+
     solicitud = crud_estudiante.crear_solicitud(db, data_constancia.id_estudiante, data_constancia.descripcion, data_constancia.otros, data_constancia.constancia_opciones)
-    # db.refresh(solicitud)
+
     response = db.query(Solicitudes).options(
         joinedload(Solicitudes.estudiante),
         joinedload(Solicitudes.constancia),
@@ -45,6 +49,6 @@ def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
     return {"mensaje": f"Estado actualizado a {data.Nuevo_Estado}"}
 
-@router.get("/{id_estudiante}", response_model=list[schemas.SolicitudSchema])
+@router.get("/{id_estudiante}", response_model=list[schemas.SolicitudResponseSchema])
 def historial_estudiante(id_estudiante: str, db: Session = Depends(get_db)):
     return crud_estudiante.obtener_solicitudes(db, id_estudiante)

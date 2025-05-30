@@ -15,7 +15,7 @@ INSERT INTO constancia_tipos VALUES
 
 INSERT INTO solicitud_estatus VALUES 
 ('pendiente', 'La solicitud esta pendiente' ),
-('revisión', 'La solicitud esta en revision' ),
+('revision', 'La solicitud esta en revision' ),
 ('completo', 'La constancia esta lista' );
 
 insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) 
