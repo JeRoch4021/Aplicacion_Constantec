@@ -1,6 +1,6 @@
 import { Container, Box, TextField, Text, Flex, Button, Spinner, Callout } from '@radix-ui/themes'
 import { useEffect, useState } from 'react'
-import logo from '../../assets/images/login_image.jpeg'
+import logo from '../../assets/images/itl_logo.jpg'
 import { AutenticarPayload, useAutenticarUsuario } from './useAutenticarUsuario'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 

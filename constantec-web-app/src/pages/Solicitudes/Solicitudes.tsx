@@ -23,7 +23,8 @@ const SolicitudEstatus = (props) => {
 }
 
 export const Solicitudes = () => {
-  const { data } = useGetSolicitudes(1)
+  const estudiante_id = localStorage.getItem('estudiante_id') || "";
+  const { data } = useGetSolicitudes(estudiante_id)
 
   return (
     <ScrollArea
@@ -36,9 +37,11 @@ export const Solicitudes = () => {
           <Table.Row>
             <Table.ColumnHeaderCell>Constancia</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>No. de Control</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Fecha</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Fecha Solicitud</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Fecha Entrega</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Estatus</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Descripcion</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Notificacion</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -51,9 +54,12 @@ export const Solicitudes = () => {
                 </Table.RowHeaderCell>
                 <Table.Cell>{row.estudiante.no_control}</Table.Cell>
                 <Table.Cell>
-                  {row.estatus.id === SolicitudEstatusTipo.COMPLETO
-                    ? row.fecha_entrega
-                    : row.fecha_solicitud}
+                  {row.fecha_solicitud}
+                </Table.Cell>
+                <Table.Cell>
+                  {row.estatus.id === SolicitudEstatusTipo.PENDIENTE
+                    ? ''
+                    : row.fecha_entrega}
                 </Table.Cell>
                 <Table.Cell>
                   <SolicitudEstatus
@@ -62,6 +68,7 @@ export const Solicitudes = () => {
                   />
                 </Table.Cell>
                 <Table.Cell>{row.estatus.descripcion}</Table.Cell>
+                <Table.Cell>{row.notificacion}</Table.Cell>
               </Table.Row>
             ))}
         </Table.Body>

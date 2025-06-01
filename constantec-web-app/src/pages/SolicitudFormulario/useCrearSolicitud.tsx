@@ -7,6 +7,7 @@ export type SolicitudPayload = {
   otros: string
   id_estudiante: string
   constancia_opciones: string[]
+  folio: string
 }
 
 const createSolicitud = async (data: SolicitudPayload) => {
