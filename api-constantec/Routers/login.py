@@ -1,19 +1,24 @@
+import logging
+from typing import Any
+
+from Autenticacion.seguridad import (
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
+from Comun.response import Response
+from CRUD import crud_estudiante
+from database.connection import SessionLocal
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import status
 from Schemas import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from Database.database import SessionLocal
-from fastapi import APIRouter, Depends, HTTPException
-from CRUD import crud_estudiante
-from typing import Any
-from Autenticacion.seguridad import get_password_hash, verify_password, create_access_token
-from Comun.response import Response
-import logging
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
 
 # Dependencias para obtener sesión de la base de datos
 def get_db():
@@ -25,22 +30,29 @@ def get_db():
 
 
 @router.post("/", response_model=Response)
-async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db: Session = Depends(get_db)):
+async def login_for_access_token(
+    estudiante_login: schemas.EstudiantesLogin, db: Session = Depends(get_db)
+):
     """
     Authenticates a user with username and password and returns a JWT.
     Client should send credentials as 'application/x-www-form-urlencoded'.
     """
-    try: 
-        estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, estudiante_login.no_control)
+    try:
+        estudiante = crud_estudiante.obtener_estudiante_por_no_control(
+            db, estudiante_login.no_control
+        )
         if estudiante is None:
-            raise HTTPException (detail="Usuario no encontrado", status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(
+                detail="Usuario no encontrado", status_code=status.HTTP_404_NOT_FOUND
+            )
         logging.debug(estudiante.contrasena)
         if not verify_password(estudiante_login.contrasena, estudiante.contrasena):
-            raise HTTPException (detail="Password incorrecto", status_code=status.HTTP_401_UNAUTHORIZED)
-        
+            raise HTTPException(
+                detail="Password incorrecto", status_code=status.HTTP_401_UNAUTHORIZED
+            )
+
     except Exception as ex:
         raise ex
-    
 
     # 1. Check if user exists and is not disabled (optional check)
     # if not user or (hasattr(user, 'disabled') and user.disabled):
@@ -60,12 +72,14 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
 
     # 3. User is authenticated, create the JWT
     # You can include additional data in the token if needed (the 'sub' claim is standard for subject/username)
-    access_token_payload = {
-        "sub": estudiante.no_control,
-        "name": estudiante.nombre
-    }
+    access_token_payload = {"sub": estudiante.no_control, "name": estudiante.nombre}
     access_token = create_access_token(jwt_payload=access_token_payload)
-    return Response(data=dict(token= access_token), success= True, messsage="autenticacion exitosa", error_code= None)
+    return Response(
+        data=dict(token=access_token),
+        success=True,
+        messsage="autenticacion exitosa",
+        error_code=None,
+    )
 
 
 # Example of a protected endpoint (you'll need to implement token verification for this)

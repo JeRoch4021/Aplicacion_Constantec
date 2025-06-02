@@ -1,13 +1,14 @@
-from sqlalchemy import Column, String, Integer, Date, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import declarative_base
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
+
 class Estudiantes(Base):
     __tablename__ = "estudiantes"
-    
+
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     no_control = Column(String(20), index=True)
     nombre = Column(String(100), nullable=False)
@@ -20,7 +21,9 @@ class Estudiantes(Base):
     contrasena = Column(String(255), nullable=False)
     primer_ingreso = Column(Boolean, default=True)
 
-    solicitudes = relationship("Solicitudes", back_populates="estudiante", cascade="all, delete")
+    solicitudes = relationship(
+        "Solicitudes", back_populates="estudiante", cascade="all, delete"
+    )
 
 
 class ConstanciaTipos(Base):
@@ -36,7 +39,9 @@ class ConstanciaOpciones(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    constancias_tipo_id = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
+    constancias_tipo_id = Column(
+        Integer, ForeignKey("constancia_tipos.id"), nullable=False
+    )
 
     tipo = relationship("ConstanciaTipos", backref="opciones")
 
@@ -68,8 +73,12 @@ class Solicitudes(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     estudiantes_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
     constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
-    fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
+    solicitud_estatus_id = Column(
+        Integer, ForeignKey("solicitud_estatus.id"), nullable=False
+    )
+    fecha_solicitud = Column(
+        Date, nullable=False, default=lambda: datetime.now().date()
+    )
     fecha_entrega = Column(Date, nullable=True)
     # trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
 
@@ -77,7 +86,7 @@ class Solicitudes(Base):
     constancia = relationship("Constancias", back_populates="solicitudes")
     estatus = relationship("SolicitudEstatus", back_populates="solicitudes")
     # trabajador = relationship("Trabajador", back_populates="solicitudes")
- 
+
 
 class Trabajador(Base):
     __tablename__ = "trabajadores"

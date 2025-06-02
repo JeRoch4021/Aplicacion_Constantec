@@ -1,12 +1,13 @@
 import datetime
 import random
 import string
+
 import factory
-from factory.alchemy import SQLAlchemyModelFactory
-from sqlalchemy import create_engine
-from Models.models import Estudiantes
-from Database.database import SessionLocal
 from Autenticacion.seguridad import get_password_hash
+from database.connection import SessionLocal
+from factory.alchemy import SQLAlchemyModelFactory
+from Models.models import Estudiantes
+from sqlalchemy import create_engine
 
 session = SessionLocal()
 
