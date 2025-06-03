@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 black
 isort
+pylint
 sqlalchemy
 Schemas
 pydantic
@@ -14,3 +15,5 @@ bcrypt < 4.0
 python - jose[cryptography]
 factory_boy
 ipython
+fastapi-admin
+asyncpg

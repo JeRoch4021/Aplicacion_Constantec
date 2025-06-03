@@ -1,6 +1,11 @@
 import logging
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
+
 from Autenticacion.seguridad import (
     create_access_token,
     get_password_hash,
@@ -9,11 +14,7 @@ from Autenticacion.seguridad import (
 from Comun.response import Response
 from CRUD import crud_estudiante
 from database.connection import SessionLocal
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
 from Schemas import schemas
-from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import NoResultFound
 
 logger = logging.getLogger(__name__)
 

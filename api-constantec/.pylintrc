@@ -1,0 +1,159 @@
+# .pylintrc
+
+[MESSAGES CONTROL]
+
+# Disable specific warnings. Add or remove as needed.
+# W0511: TODO/FIXME comments - useful to keep, but can be noisy.
+# C0114: Missing module docstring - often desired, but can be added later.
+# C0115: Missing class docstring - often desired, but can be added later.
+# C0116: Missing function or method docstring - often desired, but can be noisy initially.
+#          For FastAPI, you might rely more on type hints and Pydantic models for documentation.
+# R0903: Too few public methods - often an issue with Pydantic models or simple SQLAlchemy models.
+# E0213: Method could be a function - SQLAlchemy model methods often need `self` even if they don't use it directly.
+disable=
+    W0511,
+    C0114,
+    C0115,
+    C0116,
+    R0903,
+    E0213
+
+# You might want to enable these later or handle them selectively:
+# W0621: Redefining name %r from outer scope - can happen with FastAPI dependencies
+# W0703: Catching too general exception Exception - good practice to be more specific
+
+[REPORTS]
+
+# Set to 'no' to disable generating a report of errors, warnings, etc.
+reports=no
+
+[TYPECHECK]
+
+# List of members which are set dynamically and Pylint should not complain.
+# This is crucial for SQLAlchemy models and Pydantic models.
+# Add your specific model attribute names if Pylint still complains.
+# You can also use regex here, e.g., "my_table_.*"
+generated-members=
+    # For SQLAlchemy
+    Column,
+    Integer,
+    String,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    relationship,
+    metadata,
+    # Common SQLAlchemy model attributes often accessed dynamically
+    id,
+    # For Pydantic models (often used in FastAPI)
+    # Pylint has gotten better with Pydantic, but you might need to add specific fields
+    # if you encounter `no-member` errors.
+    BaseModel,
+    # Add common FastAPI/Pydantic attributes if needed
+    Config,
+    # If you use Alembic for migrations
+    op,
+    sa
+
+# List of names that should be ignored for "similar-" Pylint checks.
+# Useful for SQLAlchemy table names or columns that might look similar.
+# similar-names=
+
+[BASIC]
+
+# Regular expression for good variable names.
+# You might want to adjust this if you have specific conventions.
+# variable-rgx=[a-z_][a-z0-9_]{2,30}$
+
+# Regular expression for good argument names.
+# argument-rgx=[a-z_][a-z0-9_]{2,30}$
+
+# Regular expression for good class attribute names.
+# attr-rgx=[a-z_][a-z0-9_]{2,30}$
+
+# Good variable names which should always be joined by an underscore.
+# variable-names-rgx="^[a-z_][a-z0-9_]*$"
+
+# Bad variable names which should always be joined by an underscore.
+# bad-variable-names-rgx="^(_[A-Za-z0-9]+|[A-Za-z0-9]+_)$"
+
+# Regular expression for module names.
+# module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+
+# Docstring minimum length.
+# docstring-min-length=10
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=88  # Often set to 88 to align with Black formatter, or 79/100/120
+
+# Maximum number of lines in a module.
+# max-module-lines=1000
+
+# Number of spaces of indentation.
+indent-string='    ' # Four spaces
+
+[DESIGN]
+
+# Maximum number of arguments for function / method.
+max-args=7
+
+# Maximum number of locals for function / method body.
+max-locals=15
+
+# Maximum number of return statements in function / method body.
+max-returns=6
+
+# Maximum number of branch in function / method body.
+max-branches=12
+
+# Maximum number of statements in function / method body.
+max-statements=50
+
+# Maximum number of parents for a class (see R0901).
+max-parents=7
+
+# Maximum number of attributes for a class (see R0902).
+max-attributes=10 # Pydantic models can sometimes have more, adjust if needed
+
+# Minimum number of public methods for a class (see R0903).
+# min-public-methods=1 # Disabled R0903 above
+
+[CLASSES]
+
+# List of method names defining common special methods.
+# defining-attr-methods=__init__, __new__, __prepare__
+
+# List of valid names for attributes of a class.
+# valid-classmethod-first-arg=cls
+
+# List of valid names for attributes of a instance.
+# valid-instance-method-first-arg=self
+
+[VARIABLES]
+
+# List of additional names accepted for unused variables.
+# Add 'db' if you pass SQLAlchemy sessions around and Pylint complains.
+# e.g. async def get_items(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+dummy-variables-rgx=_.*|dummy.*|unused.*|db
+
+[LINTING]
+
+# Enable only specific checks by ID or symbolic name (comma-separated).
+# enable=
+
+# Load Pylint plugins
+# If you use pylint-sqlalchemy or pylint-fastapi, list them here.
+# (Make sure they are installed in your environment)
+# plugins=
+#   pylint_sqlalchemy,
+#   pylint_fastapi # Or a specific plugin if one exists and is well-maintained
+
+# If using pylint_sqlalchemy, you might need to tell it about your Declarative Base
+# sqlalchemy-declarative-base=your_module.base.Base # Replace with your actual path
+
+# -- Example for pylint-pydantic (if you were using it explicitly, though Pylint's native support has improved)
+# [PYLINT_PYDANTIC]
+# pydantic-model-validators-equals-field-or-config = no
+# pydantic-model-config-extra = "allow" # or "ignore" or "forbid"

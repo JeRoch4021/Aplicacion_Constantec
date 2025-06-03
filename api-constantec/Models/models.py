@@ -2,8 +2,11 @@ from datetime import datetime
 
 from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import declarative_base, relationship
+from database.connection import Base
+from fastapi_admin.models import AbstractAdmin as BaseAdminModel
+from sqlalchemy import Column, Integer, String, Boolean
 
-Base = declarative_base()
+# Base = declarative_base()
 
 
 class Estudiantes(Base):
@@ -102,3 +105,16 @@ class Trabajador(Base):
     fecha_inicio = Column(Date, nullable=False)
 
     # solicitudes = relationship("Solicitud", back_populates="trabajador")
+
+
+class AdminUser(Base, BaseAdminModel):
+    __tablename__ = "admin_users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(200), nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_superuser = Column(Boolean, default=False)
+
+    def __repr__(self):
+        return f"{self.username}"

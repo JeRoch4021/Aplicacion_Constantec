@@ -1,13 +1,14 @@
 import logging
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session, joinedload
+
 from Autenticacion.seguridad import get_current_user
 from CRUD import crud_estudiante
 from database.connection import SessionLocal
-from fastapi import APIRouter, Depends, HTTPException
 from Models.models import Solicitudes
 from Schemas import schemas
-from sqlalchemy.orm import Session, joinedload
 
 logger = logging.getLogger(__name__)
 

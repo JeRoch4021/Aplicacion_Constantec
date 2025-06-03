@@ -1,5 +1,8 @@
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
 from Autenticacion.seguridad import (
     create_access_token,
     get_current_user,
@@ -8,9 +11,7 @@ from Autenticacion.seguridad import (
 from Comun.response import Response
 from CRUD import crud_estudiante
 from database.connection import SessionLocal
-from fastapi import APIRouter, Depends, HTTPException, status
 from Schemas import schemas
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
