@@ -2,6 +2,24 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 
+# Constancias
+
+class CrearConstanciaRequest(BaseModel):
+    descripcion: str
+    otros: str
+    id_estudiante: int
+    constancia_opciones: list[int]
+    folio: str
+
+class ConstanciaBase(BaseModel):
+    id: int
+    descripcion: str
+    otros: Optional[str] = None
+
+class ConstanciaSalida(ConstanciaBase):
+    class Config:
+        orm_mode = True
+
 class ConstanciaTiposSchema(BaseModel):
     id: int
     tipo: str
@@ -22,6 +40,11 @@ class ConstanciaSchema(BaseModel):
     otros: Optional[str] = None
     opciones: List[ConstanciaOpcionesSchema] = []
 
+    class Config:
+        orm_mode = True
+
+# Estudiantes
+
 class EstudianteSchema(BaseModel):
     no_control: str
     nombre: str
@@ -30,6 +53,54 @@ class EstudianteSchema(BaseModel):
     edad: int
     municipio: str
     correo_institucional: str
+
+    class Config:
+        orm_mode = True
+
+class EstudianteBase(BaseModel):
+    no_control: str
+    nombre: str
+    apellidos: str
+    fecha_nacimiento: date
+    edad: int
+    semestre: int
+    carrera: str
+    municipio: str
+    correo_institucional: str
+    fecha_registro: date
+    primer_ingreso: Optional[bool] = True
+
+class EstudiantesLogin(BaseModel):
+    no_control: str
+    contrasena: str
+
+class EstudiantesContrasenaUpdate(BaseModel):
+    no_control: str
+    nueva_contrasena: str
+
+class EstudiantesSalida(EstudianteBase):
+    class Config:
+        orm_mode = True
+
+
+# Trabajadores
+
+class TrabajadorSchema(BaseModel):
+    id_trabajador: str
+    nombre: str
+    apellidos: str
+    fecha_nacimiento: date
+    edad: int
+    cargo: str
+    telefono: str
+    correo_institucional: str
+    fecha_inicio: date
+
+class TrabajadorSalida(TrabajadorSchema):
+    class Config:
+        orm_mode = True
+
+# Solicitudes
 
 class SolicitudEstatusSchema(BaseModel):
     id: int
@@ -54,104 +125,41 @@ class SolicitudResponseSchema(BaseModel):
     estatus: SolicitudEstatusSchema
     estudiante: EstudianteSchema
     constancia: ConstanciaSchema
+    notificacion: Optional[str] = None
+    trabajador: TrabajadorSchema
+    folio: str
 
     class Config:
         orm_mode = True
-
-class EstudianteBase(BaseModel):
-    no_control: str
-    nombre: str
-    apellidos: str
-    fecha_nacimiento: date
-    edad: int
-    municipio: str
-    correo_institucional: str
-    fecha_registro: date
-    primer_ingreso: Optional[bool] = True
-
-class EstudiantesLogin(BaseModel):
-    no_control: str
-    contrasena: str
-
-class EstudiantesContrasenaUpdate(BaseModel):
-    No_Control: str
-    Nueva_Contrasena: str
-
-class EstudiantesSalida(EstudianteBase):
-    class Config:
-        orm_mode = True
-
-# Constancias
-
-class CrearConstanciaRequest(BaseModel):
-    descripcion: str
-    otros: str
-    id_estudiante: int
-    constancia_opciones: list[int]
-
-class ConstanciaBase(BaseModel):
-    Tipo: str
-    Descripcion: str
-    Requisitos: str
-
-class ConstanciaSalida(ConstanciaBase):
-    class Config:
-        orm_mode = True
-
-# Solicitudes
-
-class SolicitudPost(BaseModel):
-    No_Control: str
-    ID_Constancia: int
-    Fecha_Solicitud: date
-    Estado: str
-    Fecha_Entrega: Optional[date] = None
-    ID_Trabajador: str
 
 class SolicitudBase(BaseModel):
     estudiantes_id: int
     solicitud_estatus_id: int
     fecha_solicitud: date
     fecha_entrega: Optional[date] = None
-    # id_trabajador: str
 
 class SolicitudEstado(BaseModel):
-    ID_Solicitud: int
+    id_solicitud: int
 
 class SolicitudNuevoEstado(BaseModel):
-    ID_Solicitud: str
-    Nuevo_Estado: str
+    id_solicitud: int
+    nuevo_estado: int
 
 class SolicitudSalida(SolicitudBase):
     class Config:
         orm_mode = True
 
-# Historial de solicitudes
+# Encuesta de Satisfaccion
 
-class HistorialSolicitudBase(BaseModel):
-    ID_Historial: str
-    ID_Solicitud: str
-    Estado_Anterior: str
-    Estado_Actual: str
-    Fecha_Cambio: date
+class EncuestaSatisfaccionCreate(BaseModel):
+    estudiante_id: int
+    calificacion: int
 
-class HistorialSolicitudSalida(HistorialSolicitudBase):
+class EncuestaSatisfaccionSalida(BaseModel):
+    id: int
+    estudiante_id: int
+    calificacion: int
+    
     class Config:
         orm_mode = True
 
-# Trabajadores
-
-class TrabajadorBase(BaseModel):
-    ID_Trabajador: str
-    Nombre: str
-    Apellidos: str
-    Fecha_Nacimiento: date
-    Edad: int
-    Cargo: str
-    Telefono: str
-    Correo_Institucional: str
-    Fecha_Inicio: date
-
-class TrabajadorSalida(TrabajadorBase):
-    class Config:
-        orm_mode = True

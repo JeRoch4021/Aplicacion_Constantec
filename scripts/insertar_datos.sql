@@ -18,15 +18,21 @@ INSERT INTO solicitud_estatus VALUES
 ('revision', 'La solicitud esta en revision' ),
 ('completo', 'La constancia esta lista' );
 
-insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) 
-values ('Rocha Sainez', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '22240302@leon.tecnm.mx', 18, '1983-07-04T00:00:00.000Z', '2025-05-29T00:00:00.000Z', 'Justinfurt', '22240302', 'Jeshua', 0)
+INSERT INTO Trabajadores VALUES 
+('THJ384', 'Jorge', 'Méndez Suárez', '1995-08-12', 30, 'Servicios escolares', '477 890 3463', 'jorge.mendez@leon.tecnm.mx', '2000-06-12'),
+('TPO235', 'Jessica', 'Rosas Flores', '1989-03-25', 36, 'Servicios escolares', '477 349 1211', 'jessica.rosas@leon.tecnm.mx', '1990-07-20'),
+('TFR093', 'Camilo', 'Salazar Godínez', '1998-07-05', 27, 'Servicios escolares', '477 571 9712', 'camilo.salazar@leon.tecnm.mx', '2001-05-11');
 
-insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) 
-values ('Martinez Sanchez', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '33340302@leon.tecnm.mx', 18, '1983-07-04T00:00:00.000Z', '2025-05-29T00:00:00.000Z', 'Leon', '33340302', 'Oscar', 0)
+insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [semestre], [carrera], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) values 
+('Rocha Sainez', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '22240302@leon.tecnm.mx', 21, 6, 'Sistemas', '2004-04-21', '2025-06-01', 'Leon', '22240302', 'Jeshua Isaac', 0)
 
+insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [semestre], [carrera], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) values 
+('Lopez Lozano', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '22240331@leon.tecnm.mx', 21, 6, 'Sistemas', '2004-02-26', '2025-06-01', 'Leon', '22240331', 'Irene Monserrat', 0)
 
+insert into [dbo].[estudiantes] ([apellidos], [contrasena], [correo_institucional], [edad], [semestre], [carrera], [fecha_nacimiento], [fecha_registro], [municipio], [no_control], [nombre], [primer_ingreso]) values 
+('Alvarez Guevara', '$2b$12$.tAxA1EUOoReYtXpthDCIOhGr7s6TzayAPy.yPWgwY/OjmPIcw8Jy', '23240077@leon.tecnm.mx', 20, 5, 'Sistemas', '2004-11-13', '2025-06-01', 'Leon', '23240077', 'Estefania Guadalupe', 0)
 
-// para jeshua
+--- De Jeshua
 insert into constancias values
 ('constancia para la universidad', NULL),
 ('constancia para cartilla militar', NULL);
@@ -35,7 +41,7 @@ INSERT INTO solicitudes VALUES
 (1, 1, 1, '2025-05-28', NULL),
 (1, 2, 1, '2025-05-28', NULL);
 
-// para oscar
+--- De Monse
 insert into constancias values
 ('constancia para la maestria', NULL),
 ('constancia para creditos complementarios', NULL);
@@ -43,3 +49,21 @@ insert into constancias values
 INSERT INTO solicitudes VALUES
 (2, 3, 1, '2025-05-28', NULL),
 (2, 4, 1, '2025-05-28', NULL);
+
+--- De Fany
+insert into constancias values
+('constancia para el seguro', NULL),
+('constancia de inscrito', NULL);
+
+INSERT INTO solicitudes VALUES
+(2, 3, 1, '2025-05-28', NULL),
+(2, 4, 1, '2025-05-28', NULL);
+
+--- Consultas
+SELECT * FROM estudiantes
+SELECT * FROM solicitudes
+SELECT * FROM solicitud_estatus
+SELECT * FROM constancia_tipos
+SELECT * FROM constancia_opciones
+SELECT * FROM encuesta_satisfaccion
+SELECT * FROM constancias

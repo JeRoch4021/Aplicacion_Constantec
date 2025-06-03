@@ -15,18 +15,13 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/crear-constancia", response_model=schemas.ConstanciaSalida)
-def registrar_constancia(data: schemas.ConstanciaBase, db: Session = Depends(get_db)):
-    constancia = crud_estudiante.crear_constancia(db, data.Tipo, data.Descripcion, data.Requisitos)
-    return constancia
-
-@router.get("/", response_model=list[schemas.ConstanciaSalida])
+@router.get("/obtener-constancias", response_model=list[schemas.ConstanciaSalida])
 def listar_constancias(db: Session = Depends(get_db)):
-    return db.query(models.Constancia).all()
+    return db.query(models.Constancias).all()
 
 @router.get("/{id_constancia}", response_model=schemas.ConstanciaSalida)
 def buscar_constancia(id_constancia: str, db: Session = Depends(get_db)):
-    constancia = db.query(models.Constancia).filter(models.Constancia.ID_Constancia == id_constancia).first()
+    constancia = db.query(models.Constancias).filter(models.Constancias.id == id_constancia).first()
     if not constancia:
         raise HTTPException(detial="Constancia no encontrada", status_code=404)
     return constancia

@@ -65,7 +65,7 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
         "name": estudiante.nombre
     }
     access_token = create_access_token(jwt_payload=access_token_payload)
-    return Response(data=dict(token= access_token), success= True, messsage="autenticacion exitosa", error_code= None)
+    return Response(data=dict(token= access_token, estudiante_id = estudiante.id), success= True, messsage="autenticacion exitosa", error_code= None)
 
 
 # Example of a protected endpoint (you'll need to implement token verification for this)

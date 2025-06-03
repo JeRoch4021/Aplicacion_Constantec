@@ -14,6 +14,8 @@ class Estudiantes(Base):
     apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
     edad = Column(Integer, nullable=False)
+    semestre = Column(Integer, nullable=False)
+    carrera = Column(String(100), nullable=False)
     municipio = Column(String(100), nullable=False)
     correo_institucional = Column(String(150), unique=True, nullable=False)
     fecha_registro = Column(Date, nullable=False)
@@ -71,12 +73,14 @@ class Solicitudes(Base):
     solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
     fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
     fecha_entrega = Column(Date, nullable=True)
-    # trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
+    trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
+    folio = Column(String(100), nullable=True)
+    notificacion = Column(String(100), nullable=True)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancias", back_populates="solicitudes")
     estatus = relationship("SolicitudEstatus", back_populates="solicitudes")
-    # trabajador = relationship("Trabajador", back_populates="solicitudes")
+    trabajador = relationship("Trabajador", back_populates="solicitudes")
  
 
 class Trabajador(Base):
@@ -92,4 +96,14 @@ class Trabajador(Base):
     correo_institucional = Column(String(150), unique=True, nullable=False)
     fecha_inicio = Column(Date, nullable=False)
 
-    # solicitudes = relationship("Solicitud", back_populates="trabajador")
+    solicitudes = relationship("Solicitudes", back_populates="trabajador")
+
+
+class EncuestaSatisfaccion(Base):
+    __tablename__ = "encuesta_satisfaccion"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    calificacion = Column(Integer, nullable=False)
+    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=True)
+
+    estudiante = relationship("Estudiantes")
