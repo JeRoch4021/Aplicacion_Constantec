@@ -157,3 +157,6 @@ dummy-variables-rgx=_.*|dummy.*|unused.*|db
 # [PYLINT_PYDANTIC]
 # pydantic-model-validators-equals-field-or-config = no
 # pydantic-model-config-extra = "allow" # or "ignore" or "forbid"
+[MASTER]
+disable=
+    C0114, # missing-module-docstring

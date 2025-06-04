@@ -1,15 +1,14 @@
 import logging
 import os
+from typing import AsyncGenerator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-
-# from Models.models import Base
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 logger = logging.getLogger(__name__)
 
-DB_DRIVER = "ODBC Driver 18 for SQL Server".replace(' ', '+')
+DB_DRIVER = "ODBC Driver 18 for SQL Server".replace(" ", "+")
 
 DB_HOST = os.getenv("DB_HOST", "")
 DB_PORT = os.getenv("DB_PORT", "")
@@ -30,12 +29,23 @@ try:
         autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
     )
     Base = declarative_base()
-    # Base.metadata.create_all(engine)
-    # with engine.connect() as connexion:
-    #     logger.info("Conexión exitosa a la base de datos")
 except Exception as e:
     logger.warning("Error al conectar la base de datos: ", e)
 
-async def get_db():
+
+async def get_async_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
-        yield session
+        try:
+            yield session
+        except Exception as e:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+
+async def close_database_connection():
+    # This is where you might dispose of the engine on shutdown
+    print("Lifespan: Closing database connection (disposing engine)...")
+    await engine.dispose()
+    print("Lifespan: Database connection closed.")

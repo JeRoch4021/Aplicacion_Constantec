@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload
 from Autenticacion.seguridad import get_current_user
 from CRUD import crud_estudiante
 from database.connection import SessionLocal
-from Models.models import Solicitudes
+from models.common import Solicitudes
 from Schemas import schemas
 
 logger = logging.getLogger(__name__)

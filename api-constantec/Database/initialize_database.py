@@ -1,55 +1,90 @@
 import logging
-# import os
 
-# import pyodbc
-from sqlalchemy import text
 import sqlalchemy
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import declarative_base
+from fastapi import Depends
+from sqlalchemy import select, text
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from database.connection import APPLICATION_DB_URL, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, engine, Base, DB_DRIVER, DB_USER
-
+from autenticacion.seguridad import get_password_hash
+from database.connection import (
+    DB_DRIVER,
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_USER,
+    Base,
+    engine,
+    get_async_db,
+)
+from database.decorators import with_async_session
+from models.admin import AdminUser
+from models.common import *
 
 logger = logging.getLogger(__name__)
 
 MASTER_DB_URL = f"mssql+aioodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/master?driver={DB_DRIVER}&Encrypt=no&TrustServerCertificate=yes"
 
-# def create_database_if_not_exists():
-#     database_url = (
-#         f"mssql+pyodbc://SA:{DB_PASSWORD}@{DB_HOST}/master"
-#         f"?driver={driver}&TrustServerCertificate=yes&Encrypt=yes"
-#     )
 
-#     with pyodbc.connect(database_url, autocommit=True) as conn:
-#         cursor = conn.cursor()
-#         cursor.execute(f"IF DB_ID(N'{DB_NAME}') IS NULL CREATE DATABASE [{DB_NAME}]")
-#         cursor.close()
-#         logger.info("Base de datos creada!!!!!")
+@with_async_session
+async def create_admin_user(db: AsyncSession):
+    try:
+        AdminUserQuery = select(AdminUser).where(AdminUser.username == "admin")
+        result = await db.execute(AdminUserQuery)
+
+        admin_exists = result.scalar_one_or_none()
+
+        if admin_exists is None:
+            hashed_pwd = get_password_hash("test")
+            new_admin = AdminUser(
+                username="admin", password=hashed_pwd, is_superuser=True
+            )
+            db.add(new_admin)
+            logger.info("Admin user created.")
+        else:
+            logger.info("Admin user already exists.")
+    except sqlalchemy.exc.DBAPIError as e:
+        logger.error(f"Error while trying to create admin user '{DB_NAME}': {e}")
+        raise
 
 
-# def init_db():
-#     Base = declarative_base()
-#     create_database_if_not_exists()
-#     database_url = (
-#         f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
-#         f"?driver={driver}&TrustServerCertificate=yes&Encrypt=yes"
-#     )
-#     engine = create_engine(database_url)
-#     Base.metadata.create_all(bind=engine)
+async def create_tables_in_database():
+    try:
+        async with engine.begin() as connection:
+            logger.info(f"Checking and creating tables for database '{DB_NAME}'...")
+            # await connection.run_sync(Base.metadata.create_all)
+            await connection.run_sync(
+                lambda sync_conn: Base.metadata.create_all(
+                    bind=sync_conn, checkfirst=True
+                )
+            )
+            logger.info(f"Tables for database '{DB_NAME}' are ensured to exist.")
+    except sqlalchemy.exc.DBAPIError as e:
+        logger.error(
+            f"Error while trying to create tables in database '{DB_NAME}': {e}"
+        )
+        raise
+    except Exception as e:
+        logger.error(
+            f"Unexpected error while trying to ensure tables in database '{DB_NAME}': {e}"
+        )
+        raise
+    finally:
+        await engine.dispose()
 
 
-async def initialize_database():
+async def create_database():
     master_engine = create_async_engine(MASTER_DB_URL, isolation_level="AUTOCOMMIT")
-    # Base = declarative_base()
 
     try:
         async with master_engine.connect() as connection:
-            # Check if the database exists
-            result = await connection.execute(
+
+            query_result = await connection.execute(
                 text(f"SELECT name FROM sys.databases WHERE name = :db_name"),
-                {"db_name": DB_NAME}
+                {"db_name": DB_NAME},
             )
-            database_exists = result.scalar_one_or_none() is not None
+
+            database_exists = query_result.scalar_one_or_none() is not None
 
             if not database_exists:
                 logger.info(f"Database '{DB_NAME}' does not exist. Creating...")
@@ -59,11 +94,7 @@ async def initialize_database():
                 logger.info(f"Database '{DB_NAME}' already exists.")
 
     except sqlalchemy.exc.DBAPIError as e:
-        print(f"Error while trying to ensure database '{DB_NAME}' exists: {e}")
-        # Depending on the error, you might want to raise it or handle it differently
-        # For example, if connection to master fails, the app likely can't start.
+        logger.error(f"Error while trying to ensure database '{DB_NAME}' exists: {e}")
         raise
     finally:
-        await master_engine.dispose() # Close the temporary engine
-
-    
+        await master_engine.dispose()

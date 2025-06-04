@@ -6,9 +6,7 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session, joinedload
 
 from Autenticacion.seguridad import get_password_hash
-
-# from Models.security import cifrar_contrasena
-from Models.models import ConstanciaOpciones, Constancias, Estudiantes, Solicitudes
+from models.common import ConstanciaOpciones, Constancias, Estudiantes, Solicitudes
 
 logger = logging.getLogger(__name__)
 

@@ -6,9 +6,9 @@ import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from sqlalchemy import create_engine
 
-from Autenticacion.seguridad import get_password_hash
+from autenticacion.seguridad import get_password_hash
 from database.connection import SessionLocal
-from Models.models import Estudiantes
+from models.common import Estudiantes
 
 session = SessionLocal()
 
