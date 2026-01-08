@@ -13,6 +13,3 @@ class AdminUser(Base):
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     date_created = Column(DateTime, server_default=func.now())
-
-    def __repr__(self):
-        return f"<AdminUser(username='{self.username}')>"

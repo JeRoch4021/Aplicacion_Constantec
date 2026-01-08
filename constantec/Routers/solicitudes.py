@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
-from Autenticacion.seguridad import get_current_user
+from autenticacion.seguridad import get_current_user
 from CRUD import crud_estudiante
 from database.connection import SessionLocal
 from models.common import Solicitudes

@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./api-constantec:/app
+      - ./constantec:/app
     environment:
       - DB_HOST=sqlserver
       - DB_PORT=1433

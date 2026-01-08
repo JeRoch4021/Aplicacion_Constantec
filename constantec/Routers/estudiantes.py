@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from Autenticacion.seguridad import (
+from autenticacion.seguridad import (
     create_access_token,
     get_current_user,
     verify_password,

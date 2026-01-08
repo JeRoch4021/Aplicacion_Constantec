@@ -6,14 +6,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
-from Autenticacion.seguridad import (
+from autenticacion.seguridad import (
     create_access_token,
     get_password_hash,
     verify_password,
 )
 from Comun.response import Response
 from CRUD import crud_estudiante
-from database.connection import SessionLocal
+from database.connection import AsyncSessionLocal
 from Schemas import schemas
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ router = APIRouter()
 
 # Dependencias para obtener sesión de la base de datos
 def get_db():
-    db = SessionLocal()
+    db = AsyncSessionLocal()
     try:
         yield db
     finally:

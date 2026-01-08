@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import update
 from sqlalchemy.orm import Session, joinedload
 
-from Autenticacion.seguridad import get_password_hash
+from autenticacion.seguridad import get_password_hash
 from models.common import ConstanciaOpciones, Constancias, Estudiantes, Solicitudes
 
 logger = logging.getLogger(__name__)
