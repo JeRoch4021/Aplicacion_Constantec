@@ -40,7 +40,7 @@ def listar_estudiantes(db: Session):
 
 # Métodos para el endpoint de constancias
 
-def crear_solicitud(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos_ids: list[int], folio: str):
+def crear_solicitud(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos_ids: list[int], folio: int):
     try:
         nueva_constancia = Constancias(
             descripcion = descripcion,
@@ -92,7 +92,7 @@ def actualizar_estado_solicitud(db: Session, id_solicitud:int, nuevo_estado: int
             solicitud.fecha_entrega = date.today()
         elif nuevo_estado in [SolicitudEstatus.COMPLETO.value]:
             solicitud.fecha_entrega = date.today()
-            solicitud.notificacion = "Vaya a ventanilla a recoger su constancia"
+            solicitud.notificacion = "Vaya a ventanilla a recoger su constancia y presente su factura fisica"
         db.commit()
         db.refresh(solicitud)
         return solicitud

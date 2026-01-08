@@ -67,3 +67,4 @@ SELECT * FROM constancia_tipos
 SELECT * FROM constancia_opciones
 SELECT * FROM encuesta_satisfaccion
 SELECT * FROM constancias
+SELECT * FROM trabajadores

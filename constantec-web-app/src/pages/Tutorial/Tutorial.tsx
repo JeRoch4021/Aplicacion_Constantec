@@ -42,7 +42,7 @@ export const Tutorial = () => {
                     }}
                 >
                     <ReactPlayer
-                        url='https://www.youtube.com/watch?v=Kcy9S94kYgI'
+                        url='https://youtu.be/Wf3PX-GG6Q4?si=7xxN0os0Ntbh2383'
                         controls={true}
                         width="100%"
                         height="100%"

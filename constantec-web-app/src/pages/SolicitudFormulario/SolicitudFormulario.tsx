@@ -188,7 +188,7 @@ export const SolicitudFormulario = () => {
           </CheckboxCards.Root>
         </Box>
         <Text size="3" weight="bold">
-          Folio
+          Folio de factura de pago
         </Text>
           <TextArea
             placeholder="Ingresa el folio"

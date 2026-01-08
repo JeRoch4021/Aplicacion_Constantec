@@ -9,7 +9,7 @@ class CrearConstanciaRequest(BaseModel):
     otros: str
     id_estudiante: int
     constancia_opciones: list[int]
-    folio: str
+    folio: int
 
 class ConstanciaBase(BaseModel):
     id: int
