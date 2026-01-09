@@ -16,7 +16,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-ADD api-constantec/requirements_dev.txt ./
+ADD constantec/requirements_dev.txt ./
 
 RUN pip install --no-cache-dir -r requirements_dev.txt
 
