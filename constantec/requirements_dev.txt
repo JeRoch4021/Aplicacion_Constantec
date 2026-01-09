@@ -10,8 +10,8 @@ typing
 datetime
 pyodbc
 aioodbc
-bcrypt==3.2.0
 passlib[bcrypt]
+bcrypt==3.2.0
 python-jose
 factory_boy
 ipython
