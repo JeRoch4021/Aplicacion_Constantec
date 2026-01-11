@@ -1,6 +1,9 @@
 services:
   fastapi:
-    image: jeshuarocha/constantec_dev:latest
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.dev
+    image: jeshuarocha/constantec_dev:1.7.0
     container_name: constantec-dev
     ports:
       - "8000:8000"

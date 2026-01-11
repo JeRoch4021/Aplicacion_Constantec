@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 import logging
 from .init_db import init_db
-from Models.models import Base
+from models.tables import Base
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,6 @@ database_url = (
     f"?driver={driver.replace(' ', '+')}&TrustServerCertificate=yes&Encrypt=yes"
     )
 
-
 try:
     engine = create_engine(database_url)    
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -29,4 +28,3 @@ try:
         logger.info("Conexión exitosa a la base de datos")
 except Exception as e:
     logger.warning("Error al conectar la base de datos: ", e)
-

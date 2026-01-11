@@ -1,14 +1,14 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import status
-from Schemas import schemas
+from paquetes import schemas
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from Database.database import SessionLocal
+from database.connection import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
-from CRUD import crud_estudiante
+from crud import crud_estudiante
 from typing import Any
-from Autenticacion.seguridad import get_password_hash, verify_password, create_access_token
-from Comun.response import Response
+from autenticacion.seguridad import get_password_hash, verify_password, create_access_token
+from comun.response import Response
 import logging
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,8 @@ async def login_for_access_token(estudiante_login: schemas.EstudiantesLogin, db:
         "name": estudiante.nombre
     }
     access_token = create_access_token(jwt_payload=access_token_payload)
-    return Response(data=dict(token= access_token), success= True, messsage="autenticacion exitosa", error_code= None)
+    return Response(data=dict(token= access_token, estudiante_id = estudiante.id), success= True, messsage="autenticacion exitosa", error_code= None)
+
 
 
 # Example of a protected endpoint (you'll need to implement token verification for this)
