@@ -31,8 +31,10 @@ const autenticarUsuario = async (data: AutenticarPayload) => {
   console.log(response.data)
   if (response.data?.data?.token) {
       localStorage.setItem('token', response.data?.data?.token)
+      localStorage.setItem('estudiante_id', response.data?.data?.estudiante_id) 
   }
   return response.data
+
 }
 
 export const useAutenticarUsuario = () => {

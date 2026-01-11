@@ -1,6 +1,10 @@
+
 import { Flex, Tabs, Separator, Button, Avatar, Text } from '@radix-ui/themes'
-import { Solicitudes } from '../Solicitudes'
-import { SolicitudFormulario } from '../SolicitudFormulario/SolicitudFormulario'
+import { Solicitudes } from '../solicitudes'
+import { SolicitudFormulario } from '../solicitud-formulario/SolicitudFormulario'
+import { EncuestaSatisfaccion } from '../encuesta-satisfaccion/EncuestaSatisfaccion'
+import { Tutorial } from '../tutorial/Tutorial'
+
 import { useState } from 'react'
 import logo from '../../assets/images/constantec_logo.jpg'
 import profile from '../../assets/images/profile.png'
@@ -10,6 +14,8 @@ export const Dashboard = () => {
 
   const cerrarSession = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('estudiante_id');
+    
     window.location.href = '/';
   }
 
@@ -40,6 +46,8 @@ export const Dashboard = () => {
         <Tabs.List className="flex border-b gap-4 p-4">
           <Tabs.Trigger value="solicitudes">Solicitudes</Tabs.Trigger>
           <Tabs.Trigger value="crear">Crear Solicitud</Tabs.Trigger>
+          <Tabs.Trigger value="encuesta">Encuesta</Tabs.Trigger>
+          <Tabs.Trigger value="tutorial">Tutorial</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="solicitudes" className="p-4">
@@ -50,6 +58,16 @@ export const Dashboard = () => {
         <Tabs.Content value="crear" className="p-4">
           <Flex width="100%" justify="center">
             <SolicitudFormulario />
+          </Flex>
+        </Tabs.Content>
+        <Tabs.Content value="encuesta" className="p-4">
+          <Flex width="100%" justify="center">
+            <EncuestaSatisfaccion />
+          </Flex>
+        </Tabs.Content>
+        <Tabs.Content value="tutorial" className="p-4">
+          <Flex width="100%" justify="center">
+            <Tutorial />
           </Flex>
         </Tabs.Content>
       </Tabs.Root>

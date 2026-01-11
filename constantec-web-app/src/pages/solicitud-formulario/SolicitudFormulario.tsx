@@ -27,6 +27,7 @@ export const SolicitudFormulario = () => {
   const [descripcion, setDescripcion] = useState<string>('')
   const [otros, setOtros] = useState<string>('')
   const [errorForm, setErrorForm] = useState<string>('')
+  const [folio, setFolio] = useState('')
 
   const { crearSolicitud, loading, error, status } = useCrearSoliciutd()
 
@@ -40,6 +41,7 @@ export const SolicitudFormulario = () => {
     if (status === 'success') {
       setDescripcion('')
       setOpciones([])
+      setFolio('')
       setOtros('')
     }
   }, [status])
@@ -57,15 +59,23 @@ export const SolicitudFormulario = () => {
       return
     }
 
+    if (folio.length === 0) {
+      setErrorForm('Agrega el folio')
+      return
+    }
+
     if (errorForm.length > 0) {
       setErrorForm('')
     }
 
+    const estudiante_id = localStorage.getItem('estudiante_id') || "";
+
     const peticion: SolicitudPayload = {
       descripcion: descripcion.trim(),
       otros: otros.trim(),
-      id_estudiante: '1',
+      id_estudiante: estudiante_id,
       constancia_opciones: opciones,
+      folio: folio.trim(),
     }
 
     crearSolicitud(peticion)
@@ -177,6 +187,20 @@ export const SolicitudFormulario = () => {
             </CheckboxCards.Item>
           </CheckboxCards.Root>
         </Box>
+        <Text size="3" weight="bold">
+          Folio de factura de pago
+        </Text>
+          <TextArea
+            placeholder="Ingresa el folio"
+            mt="2"
+            value={folio}
+            disabled={loading}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              const soloNumeros = e.target.value.replace(/\D/g, '')
+              setFolio(soloNumeros)
+            }}
+            style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', marginBottom: 12, width: '100%' }}
+          />
         <Text size="3" weight="bold">
           Otros
         </Text>
