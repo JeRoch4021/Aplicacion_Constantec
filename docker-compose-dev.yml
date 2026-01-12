@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/Dockerfile.dev
-    image: jeshuarocha/constantec_dev:1.7.0
+    image: jeshuarocha/constantec_dev:latest
     container_name: constantec-dev
     ports:
       - "8000:8000"

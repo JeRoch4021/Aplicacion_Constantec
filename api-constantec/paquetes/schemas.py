@@ -68,15 +68,15 @@ class EstudianteBase(BaseModel):
     municipio: str
     correo_institucional: str
     fecha_registro: date
-    primer_ingreso: Optional[bool] = True
-
-class EstudiantesLogin(BaseModel):
-    no_control: str
-    contrasena: str
+    is_active: Optional[bool] = True
 
 class EstudiantesContrasenaUpdate(BaseModel):
     no_control: str
-    nueva_contrasena: str
+    nueva_password: str
+
+class LoginRequest(BaseModel):
+    usuario: str
+    password: str
 
 class EstudiantesSalida(EstudianteBase):
     class Config:

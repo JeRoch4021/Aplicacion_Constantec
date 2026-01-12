@@ -24,8 +24,13 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle errors globally
-    return Promise.reject(error)
+    if (error.response?.status === 401) {
+      // Token expirado, redirigir al login
+      alert("Su sessión ha expirado por inactividad.");
+      localStorage.clear();
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
   }
 )
 

@@ -3,19 +3,23 @@ import axiosClient from '../../api/axiosClient'
 import { AxiosError } from 'axios'
 
 export type AutenticarPayload = {
-  no_control: string
-  contrasena: string
+  usuario: string;
+  password: string;
 }
 
 type ApiErrorResponse = {
-  detail: string
+  detail: string;
 }
 
 type AutenticarResponse = {
-    success: boolean,
-    messsage: string,
-    error_code: string | null
-    data: string
+    success: boolean;
+    messsage: string;
+    error_code: string | null;
+    data: {
+        token: string;
+        estudiante_id: string;
+        tipo: string;
+    }
 }
 
 const autenticarUsuario = async (data: AutenticarPayload) => {
@@ -30,11 +34,18 @@ const autenticarUsuario = async (data: AutenticarPayload) => {
   )
   console.log(response.data)
   if (response.data?.data?.token) {
-      localStorage.setItem('token', response.data?.data?.token)
-      localStorage.setItem('estudiante_id', response.data?.data?.estudiante_id) 
+      localStorage.setItem('token', response.data?.data?.token);
+      localStorage.setItem('estudiante_id', response.data?.data?.estudiante_id);
+
+      // Agrega lógica para redirigir basado en tipo
+      const payload = JSON.parse(atob(response.data.data.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); // Decodifica JWT básico
+      if (payload.tipo === 'admin') {
+        window.location.href = `http://localhost:8000/admin-access?token=${response.data.data.token}/`;
+      } else {
+        window.location.href = '/dashboard';
+      }
   }
   return response.data
-
 }
 
 export const useAutenticarUsuario = () => {

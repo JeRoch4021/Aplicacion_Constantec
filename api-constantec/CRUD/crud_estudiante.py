@@ -7,7 +7,6 @@ from datetime import date, datetime
 from autenticacion.seguridad import get_password_hash
 from sqlalchemy.orm import joinedload
 import logging
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 

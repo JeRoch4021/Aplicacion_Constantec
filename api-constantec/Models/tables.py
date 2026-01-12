@@ -5,11 +5,12 @@ from datetime import datetime
 
 Base = declarative_base()
 
+# Tabla de estudiantes del ITL
 class Estudiantes(Base):
     __tablename__ = "estudiantes"
     
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    no_control = Column(String(20), index=True)
+    no_control = Column(String(20), unique=True, index=True)
     nombre = Column(String(100), nullable=False)
     apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
@@ -19,12 +20,12 @@ class Estudiantes(Base):
     municipio = Column(String(100), nullable=False)
     correo_institucional = Column(String(150), unique=True, nullable=False)
     fecha_registro = Column(Date, nullable=False)
-    contrasena = Column(String(255), nullable=False)
-    primer_ingreso = Column(Boolean, default=True)
+    password = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True)
 
     solicitudes = relationship("Solicitudes", back_populates="estudiante", cascade="all, delete")
 
-
+# Tabla de tipos de constancia
 class ConstanciaTipos(Base):
     __tablename__ = "constancia_tipos"
 
@@ -32,7 +33,7 @@ class ConstanciaTipos(Base):
     tipo = Column(String(100), nullable=False)
     descripcion = Column(String, nullable=False)
 
-
+# Tabla de opciones de constancia
 class ConstanciaOpciones(Base):
     __tablename__ = "constancia_opciones"
 
@@ -42,7 +43,7 @@ class ConstanciaOpciones(Base):
 
     tipo = relationship("ConstanciaTipos", backref="opciones")
 
-
+# Tabla de constancias
 class Constancias(Base):
     __tablename__ = "constancias"
 
@@ -53,7 +54,7 @@ class Constancias(Base):
     solicitudes = relationship("Solicitudes", back_populates="constancia")
     opciones = relationship("ConstanciaOpciones", backref="constancia")
 
-
+# Tabla de estatus de solicitudes 
 class SolicitudEstatus(Base):
     __tablename__ = "solicitud_estatus"
 
@@ -63,7 +64,7 @@ class SolicitudEstatus(Base):
 
     solicitudes = relationship("Solicitudes", back_populates="estatus")
 
-
+# Tabla de solicitudes
 class Solicitudes(Base):
     __tablename__ = "solicitudes"
 
@@ -82,7 +83,7 @@ class Solicitudes(Base):
     estatus = relationship("SolicitudEstatus", back_populates="solicitudes")
     trabajador = relationship("Trabajador", back_populates="solicitudes")
  
-
+# Tabla de trabajador
 class Trabajador(Base):
     __tablename__ = "trabajadores"
 
@@ -98,6 +99,7 @@ class Trabajador(Base):
 
     solicitudes = relationship("Solicitudes", back_populates="trabajador")
 
+# Tabla de encuestas
 class EncuestaSatisfaccion(Base):
     __tablename__ = "encuesta_satisfaccion"
 

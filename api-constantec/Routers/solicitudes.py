@@ -5,10 +5,9 @@ from crud import crud_estudiante
 from paquetes import schemas
 from models.tables import Solicitudes
 from sqlalchemy.orm import joinedload
-from typing import Any
-from autenticacion.seguridad import get_current_user
 import logging
-
+from autenticacion.seguridad import get_current_user
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=schemas.SolicitudRequestSchema)
-def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Session = Depends(get_db)):
+def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
 
     if (getattr(data_constancia, "descripcion", None) is None or len(data_constancia.descripcion) == 0 ):
         raise HTTPException(status_code=400, detail="No se puede crear una solicitud sin descripcion")
@@ -44,14 +43,14 @@ def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Ses
     return response
 
 @router.post("/estado")
-def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depends(get_db)):
+def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     estado = crud_estudiante.obtener_estado_constancia(db, data.id_solicitud)
     if not estado:
         raise HTTPException(detail="Constancia no encontrada", status_code=404)
     return {"Estado: ": estado}
 
 @router.put("/actualizar-estado")
-def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(get_db)):
+def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     solicitud = crud_estudiante.actualizar_estado_solicitud(db, data.id_solicitud, data.nuevo_estado)
     if not solicitud:
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
@@ -62,7 +61,7 @@ def historial_estudiante(id_estudiante: int, db: Session = Depends(get_db), auth
     return crud_estudiante.obtener_solicitudes(db, id_estudiante)
 
 @router.get("/obtener-solicitudes/", response_model=list[schemas.SolicitudResponseSchema])
-def listar_solicitudes(db: Session = Depends(get_db)):
+def listar_solicitudes(db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     return db.query(Solicitudes).options(
         joinedload(Solicitudes.estatus),
         joinedload(Solicitudes.estudiante),
@@ -71,7 +70,7 @@ def listar_solicitudes(db: Session = Depends(get_db)):
     ).all()
 
 @router.delete("/eliminar-solicitud/{solicitud_id}", status_code=status.HTTP_200_OK)
-def eliminar_solicitud(id_solicitud: int, db: Session = Depends(get_db)):
+def eliminar_solicitud(id_solicitud: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
 
     if not solicitud:

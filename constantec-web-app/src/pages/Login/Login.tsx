@@ -5,7 +5,7 @@ import { AutenticarPayload, useAutenticarUsuario } from './useAutenticarUsuario'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 
 export const Login = () => {
-  const [noControl, setNoControl] = useState('')
+  const [usuario, setUsuario] = useState('')
   const [password, setPassword] = useState('')
   const [errorForm, setError] = useState<string>('');
 
@@ -19,15 +19,25 @@ export const Login = () => {
 
   useEffect(() => {
       if (status === 'success') {
-        window.location.href = '/dashboard';
+
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+          if (payload.tipo === 'admin') {
+                window.location.href = `http://localhost:8000/admin-access?token=${token}/`;
+          } else {
+                window.location.href = '/dashboard';
+          }
+        }
       }
-    }, [status])
+    }, [status]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (noControl?.length == 0) {
-      setError('Numero de Control Requerido')
+    if (usuario?.length == 0) {
+      setError('Usuario Requerido')
       return
     }
 
@@ -37,8 +47,8 @@ export const Login = () => {
     }
 
     const peticion: AutenticarPayload = {
-      no_control: noControl,
-      contrasena: password
+      usuario: usuario,
+      password: password
     }
 
     login(peticion);
@@ -62,14 +72,14 @@ export const Login = () => {
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
             <Text size="3">No. de Control</Text>
             <TextField.Root
-              type="number"
+              type="text"
               size="3"
               placeholder="Numero de Control"
               mb="3"
               disabled={loading}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 e.preventDefault()
-                setNoControl(e?.target?.value.trim())
+                setUsuario(e?.target?.value.trim())
               }}
             />
             <Text size="3">Password</Text>

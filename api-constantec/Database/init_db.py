@@ -3,6 +3,9 @@ import os
 import logging
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
+from models.tables import Base
+from models.tables import *
+from models.admin import Administradores
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +29,6 @@ def create_database_if_not_exists():
         logger.info("Base de datos creada!!!!!")
 
 def init_db():
-    Base = declarative_base()
     create_database_if_not_exists()
     database_url = (
         f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"

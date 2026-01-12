@@ -16,7 +16,7 @@ class EstudiantesAdmin(ModelView, model=Estudiantes):
                    Estudiantes.municipio, 
                    Estudiantes.correo_institucional, 
                    Estudiantes.fecha_registro,
-                   Estudiantes.contrasena]
+                   Estudiantes.password]
 
     form_columns = [Estudiantes.no_control, 
                     Estudiantes.nombre, 
@@ -26,10 +26,10 @@ class EstudiantesAdmin(ModelView, model=Estudiantes):
                     Estudiantes.municipio, 
                     Estudiantes.correo_institucional, 
                     Estudiantes.fecha_registro,
-                    Estudiantes.contrasena]
+                    Estudiantes.password]
 
     form_overrides = {
-        "contrasena": PasswordField,
+        "password": PasswordField,
     }
 
     column_labels = {Estudiantes.no_control : "No. Control", 
@@ -40,19 +40,19 @@ class EstudiantesAdmin(ModelView, model=Estudiantes):
                      Estudiantes.municipio : "Municipio", 
                      Estudiantes.correo_institucional : "Correo Institucional", 
                      Estudiantes.fecha_registro : "Fecha de Registro",
-                     Estudiantes.contrasena : "Contraseña"}
+                     Estudiantes.password : "Contraseña"}
 
     async def on_model_change(self, data, model, is_created, request):
         # Extraer la contraseña del diccionario de datos del formulario
-        password_plana = data.get('contrasena')
+        password_plana = data.get('password')
 
         if password_plana:
             # Ciframos la contraseña
             password_cifrada = get_password_hash(password_plana)
 
             # Actualizamos el valor cifrado de la contraseña en el modelo y diccionario data
-            model.contrasena = password_cifrada
-            data['contrasena'] = password_cifrada
+            model.password = password_cifrada
+            data['password'] = password_cifrada
         elif is_created:
             # Si es un diccionario nuevo y no hay contraseña, 
             # lanzamos un error manual para evitar el IntegrityError

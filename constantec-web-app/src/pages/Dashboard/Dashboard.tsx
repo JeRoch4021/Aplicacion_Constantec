@@ -4,18 +4,44 @@ import { Solicitudes } from '../solicitudes'
 import { SolicitudFormulario } from '../solicitud-formulario/SolicitudFormulario'
 import { EncuestaSatisfaccion } from '../encuesta-satisfaccion/EncuestaSatisfaccion'
 import { Tutorial } from '../tutorial/Tutorial'
-
-import { useState } from 'react'
+import { jwtDecode } from "jwt-decode"
+import { useEffect, useState } from 'react'
 import logo from '../../assets/images/constantec_logo.jpg'
 import profile from '../../assets/images/profile.png'
 
 export const Dashboard = () => {
   const [error, setError] = useState<string | null>(null)
 
-  const cerrarSession = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('estudiante_id');
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const decoded: any = jwtDecode(token);
+          const tiempoActual = Date.now() / 1000; // Tiempo en segundos
+
+          if (decoded.exp < tiempoActual) {
+            // El token ya expiró antes de entrar
+            alert("Su sessión ha expirado. Por favor inicie sesión nuevamente.");
+            cerrarSession();
+          }
+        } catch (e) {
+          cerrarSession();
+        }
+      } else {
+        window.location.href = '/';
+      }
+    };
+
+    checkToken();
+
+    const intervalo = setInterval(checkToken, 10000);
+    return () => clearInterval(intervalo);
     
+  }, []);
+
+  const cerrarSession = () => {
+    localStorage.clear();
     window.location.href = '/';
   }
 
