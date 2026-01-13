@@ -16,6 +16,8 @@ services:
       - DB_PASSWORD=YourStrong!Passw0rd
       - DB_NAME=constantec
       - PYTHONUNBUFFERED=1
+    depends_on:
+      - sqlserver
   
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest

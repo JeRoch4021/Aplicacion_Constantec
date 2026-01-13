@@ -24,7 +24,7 @@ type AutenticarResponse = {
 
 const autenticarUsuario = async (data: AutenticarPayload) => {
   const response = await axiosClient.post(
-    'http://localhost:8000/v1/login/',
+    '/v1/login/',
     data,
     {
       headers: {
@@ -36,14 +36,6 @@ const autenticarUsuario = async (data: AutenticarPayload) => {
   if (response.data?.data?.token) {
       localStorage.setItem('token', response.data?.data?.token);
       localStorage.setItem('estudiante_id', response.data?.data?.estudiante_id);
-
-      // Agrega lógica para redirigir basado en tipo
-      const payload = JSON.parse(atob(response.data.data.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); // Decodifica JWT básico
-      if (payload.tipo === 'admin') {
-        window.location.href = `http://localhost:8000/admin-access?token=${response.data.data.token}/`;
-      } else {
-        window.location.href = '/dashboard';
-      }
   }
   return response.data
 }

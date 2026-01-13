@@ -42,7 +42,7 @@ export const Dashboard = () => {
 
   const cerrarSession = () => {
     localStorage.clear();
-    window.location.href = '/';
+    window.location.href = '/logout';
   }
 
   return (

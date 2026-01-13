@@ -94,6 +94,20 @@ export const SolicitudFormulario = () => {
     <Box width="700px" mt="3">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
         <Text size="3" weight="bold">
+          Folio de factura de pago
+        </Text>
+          <TextArea
+            placeholder="Ingresa el folio"
+            mt="2"
+            value={folio}
+            disabled={loading}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              const soloNumeros = e.target.value.replace(/\D/g, '')
+              setFolio(soloNumeros)
+            }}
+            style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', marginBottom: 12, width: '100%' }}
+        />
+        <Text size="3" weight="bold">
           Descripcion
         </Text>
         <TextArea
@@ -106,6 +120,9 @@ export const SolicitudFormulario = () => {
             setDescripcion(e?.target?.value)
           }}
         />
+        <Text size="3" weight="bold">
+          Marcar la opción que necesites
+        </Text>
         <Box mt="2" mb="2">
           <CheckboxCards.Root
             disabled={loading}
@@ -119,7 +136,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('1')
               }}
             >
-              <Text>Inscritos</Text>
+              <Text>Inscritos (IMSS, ISSTE, Pagobús)</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="2"
@@ -127,7 +144,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('2')
               }}
             >
-              <Text>Kardex</Text>
+              <Text>Promedio general</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="3"
@@ -135,7 +152,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('3')
               }}
             >
-              <Text>Seguro Social</Text>
+              <Text>Promedio semestre anterior</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="4"
@@ -143,7 +160,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('4')
               }}
             >
-              <Text>Calificaciones del Semestre Anterior</Text>
+              <Text>Promedio dos últimos semestres</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="5"
@@ -151,7 +168,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('5')
               }}
             >
-              <Text>Calificaciones de Dos Semestres Anteriores</Text>
+              <Text>Egresado</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="6"
@@ -159,7 +176,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('6')
               }}
             >
-              <Text>Egreso</Text>
+              <Text>Bachillerato</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="7"
@@ -167,7 +184,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('7')
               }}
             >
-              <Text>Título en Trámite</Text>
+              <Text>Maestría</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="8"
@@ -175,7 +192,7 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('8')
               }}
             >
-              <Text>Pago</Text>
+              <Text>Título en tramite</Text>
             </CheckboxCards.Item>
             <CheckboxCards.Item
               value="9"
@@ -183,24 +200,10 @@ export const SolicitudFormulario = () => {
                 seleccionarOpcion('9')
               }}
             >
-              <Text>Personalizada</Text>
+              <Text>Incluir número de Seguro Social</Text>
             </CheckboxCards.Item>
           </CheckboxCards.Root>
         </Box>
-        <Text size="3" weight="bold">
-          Folio de factura de pago
-        </Text>
-          <TextArea
-            placeholder="Ingresa el folio"
-            mt="2"
-            value={folio}
-            disabled={loading}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              const soloNumeros = e.target.value.replace(/\D/g, '')
-              setFolio(soloNumeros)
-            }}
-            style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', marginBottom: 12, width: '100%' }}
-          />
         <Text size="3" weight="bold">
           Otros
         </Text>

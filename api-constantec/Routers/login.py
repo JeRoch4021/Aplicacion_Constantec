@@ -1,5 +1,5 @@
 #from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import status
+from fastapi import status, Response
 from paquetes import schemas
 from sqlalchemy.orm import Session
 #from sqlalchemy.orm.exc import NoResultFound
@@ -9,7 +9,7 @@ from crud import crud_estudiante
 from crud import crud_administrador
 from typing import Any
 from autenticacion.seguridad import verify_password, create_access_token
-from comun.response import Response
+from comun.response import Response as CommonResponse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,8 +25,8 @@ def get_db():
         db.close()
 
 
-@router.post("/", response_model=Response)
-async def login_for_access_token(login_request: schemas.LoginRequest, db: Session = Depends(get_db)):
+@router.post("/", response_model=CommonResponse)
+async def login_for_access_token(login_request: schemas.LoginRequest, response: Response, db: Session = Depends(get_db)):
     usuario = None
     tipo = None
 
@@ -76,9 +76,16 @@ async def login_for_access_token(login_request: schemas.LoginRequest, db: Sessio
         "tipo": tipo,
     }
     access_token = create_access_token(jwt_payload=access_token_payload)
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        path="/"
+    )
     
     # Devolvemos la respuesta, comprobando si es un administrador
-    return Response(
+    return CommonResponse(
         data = {"token" : access_token,
                 "estudiante_id": usuario.id,
                 "tipo" : tipo}, 

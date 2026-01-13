@@ -38,7 +38,6 @@ def decode_access_token(token: str) -> Optional[dict[str, Any]]:
     except JWTError:
         return None
     
-
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict[str, Any]:
     payload = decode_access_token(token)
     
@@ -50,4 +49,3 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dic
         )
     
     return payload
-    

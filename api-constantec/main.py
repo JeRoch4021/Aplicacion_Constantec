@@ -1,16 +1,16 @@
 import inspect
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 from routers import estudiantes, constancias, solicitudes, login, encuestas
 from sqladmin import Admin
-from starlette.requests import Request
-from starlette.responses import RedirectResponse
-from autenticacion.seguridad import decode_access_token
+from sqladmin.authentication import AuthenticationBackend
+from autenticacion.seguridad import decode_access_token, SECRET_KEY
 from database.connection import engine
+from starlette.requests import Request
 import admin as AdminViews
 
 logging.basicConfig(
@@ -30,23 +30,55 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class AdminAutenticador:
+@app.get("/admin-panel/login")
+def disable_sqladmin_login():
+    return RedirectResponse(url="/")
+
+@app.get("/logout")
+def logout():
+    response = RedirectResponse(url="/", status_code=302)
+
+    response.delete_cookie(key="access_token", path="/")
+
+    return response
+
+
+class AdminAutenticador(AuthenticationBackend):
      async def login(self, request: Request) -> bool:
-        return False
+        return True
      
      async def logout(self, request: Request) -> bool:
         request.session.clear()
-        return True
+
+        response = RedirectResponse(url="/", status_code=302)
+
+        response.delete_cookie(key="access_token", path="/")
+
+        response.headers["Clear-Site-Data"] = '"storage", "cookies"'
+
+        return response
      
      async def authenticate(self, request: Request) -> bool:
-        token = request.cookies.get("admin_token")
-        if token:
+        token = request.cookies.get("access_token")
+        if not token:
+            return False
+        try:
             payload = decode_access_token(token)
-            if payload and payload.get("tipo") == "admin":
-                return True
-        return False
+            if payload and payload.get("tipo") != "admin":
+                return False
+        except Exception:
+            return False
 
-admin = Admin(app, engine, base_url='/admin-panel')
+        return True
+
+authentication_backend = AdminAutenticador(secret_key=SECRET_KEY)
+
+admin = Admin(
+    app, 
+    engine, 
+    base_url='/admin-panel', 
+    authentication_backend=authentication_backend
+)
 
 for attribute_name in AdminViews.__all__:
         attribute_value = getattr(AdminViews, attribute_name)
@@ -54,6 +86,19 @@ for attribute_name in AdminViews.__all__:
             admin.add_view(attribute_value)
 
 app.mount("/assets", StaticFiles(directory="web-app/assets"), name="assets")
+
+@app.get("/admin-access")
+async def acceso_administrador(token: str = None):
+    if not token:
+        raise HTTPException(status_code=401, detail="Token requerido")
+    payload = decode_access_token(token)
+
+    if not payload or payload.get("tipo") != "admin":
+        raise HTTPException(status_code=403, detail="No autorizado")
+        
+    response = RedirectResponse(url="/admin-panel/", status_code=302)
+    # response.set_cookie("admin_token", token, httponly=True)
+    return response
 
 app.include_router(login.router, prefix="/v1/login", tags=["Login"])
 app.include_router(estudiantes.router, prefix="/v1/estudiantes", tags=["Estudiantes"])
@@ -67,13 +112,3 @@ def iniciando_sesion(full_path: str):
         raise HTTPException(status_code=404, detail="Not Found")
     return FileResponse("web-app/index.html")
 
-@app.get("/admin-access")
-async def acceso_administrador(token: str = None):
-    if not token:
-        raise HTTPException(status_code=401, detail="Token requerido")
-    payload = decode_access_token(token)
-    if not payload or payload.get("tipo") != "admin":
-        raise HTTPException(status_code=403, detail="No autorizado")
-    response = RedirectResponse(url="/admin-panel", status_code=302)
-    response.set_cookie("admin_token", token, httponly=True)
-    return response
