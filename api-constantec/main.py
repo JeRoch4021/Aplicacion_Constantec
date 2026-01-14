@@ -5,7 +5,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 import logging
 from fastapi.middleware.cors import CORSMiddleware
-from routers import estudiantes, constancias, solicitudes, login, encuestas
+from routers import estudiantes, constancias, solicitudes, login, encuestas, comprobantes
 from sqladmin import Admin
 from sqladmin.authentication import AuthenticationBackend
 from autenticacion.seguridad import decode_access_token, SECRET_KEY
@@ -41,7 +41,6 @@ def logout():
     response.delete_cookie(key="access_token", path="/")
 
     return response
-
 
 class AdminAutenticador(AuthenticationBackend):
      async def login(self, request: Request) -> bool:
@@ -105,6 +104,7 @@ app.include_router(estudiantes.router, prefix="/v1/estudiantes", tags=["Estudian
 app.include_router(constancias.router, prefix="/v1/constancias", tags=["Constancias"])
 app.include_router(solicitudes.router, prefix="/v1/solicitudes", tags=["Solicitudes"])
 app.include_router(encuestas.router, prefix="/v1/encuestas", tags=["Encuestas"])
+app.include_router(comprobantes.router, prefix="/v1/comprobantes", tags=["Comprobantes"])
 
 @app.get("/{full_path:path}")
 def iniciando_sesion(full_path: str):

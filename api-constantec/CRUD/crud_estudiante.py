@@ -97,13 +97,11 @@ def actualizar_estado_solicitud(db: Session, id_solicitud:int, nuevo_estado: int
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
     if solicitud:
         solicitud.solicitud_estatus_id = nuevo_estado
-        solicitud.notificacion = None
         solicitud.fecha_entrega = None
         if nuevo_estado in [SolicitudEstatus.REVISION.value]:
             solicitud.fecha_entrega = date.today()
         elif nuevo_estado in [SolicitudEstatus.COMPLETO.value]:
             solicitud.fecha_entrega = date.today()
-            solicitud.notificacion = "Vaya a ventanilla a recoger su constancia y presente su factura fisica"
         db.commit()
         db.refresh(solicitud)
         return solicitud
@@ -113,10 +111,11 @@ def obtener_solicitudes(db: Session, estudiante_id: int):
     solicitudes = db.query(Solicitudes).options(joinedload(Solicitudes.estatus)).filter(Solicitudes.estudiantes_id == estudiante_id).all()
     return solicitudes
 
-def guardar_encuesta (db: Session, id_estudiante: int, calificacion: int):
+def guardar_encuesta (db: Session, id_estudiante: int, calificacion: int, sugerencia: str):
     nueva_encuesta = EncuestaSatisfaccion(
         estudiante_id = id_estudiante,
-        calificacion = calificacion
+        calificacion = calificacion,
+        sugerencia = sugerencia
     )
 
     db.add(nueva_encuesta)

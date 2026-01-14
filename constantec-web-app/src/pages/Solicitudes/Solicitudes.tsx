@@ -29,26 +29,29 @@ export const Solicitudes = () => {
   return (
     <ScrollArea
       type="always"
-      scrollbars="vertical"
+      scrollbars="both"
       style={{ height: 'calc(100vh - 120px)' }}
     >
       <Table.Root style={{ width: '100%%' }} variant="surface" mt="3">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Constancia</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>No. de Control</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Fecha Solicitud</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Fecha Entrega</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Estatus</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Descripcion</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Notificacion</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Constancia</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Descripción de la Constancia</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>No. de Control</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Fecha Solicitud</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Fecha Entrega</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Estatus</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Descripción del Estatus</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {Array.isArray(data) &&
             data.length > 0 &&
             data.map((row) => (
-              <Table.Row>
+              <Table.Row key={row.id}>
+                <Table.RowHeaderCell>
+                  {row.constancia.opciones[0]?.tipo.tipo || "Resultado Desconocido"}
+                </Table.RowHeaderCell>
                 <Table.RowHeaderCell>
                   {row.constancia.descripcion}
                 </Table.RowHeaderCell>
@@ -57,9 +60,7 @@ export const Solicitudes = () => {
                   {row.fecha_solicitud}
                 </Table.Cell>
                 <Table.Cell>
-                  {row.estatus.id === SolicitudEstatusTipo.PENDIENTE
-                    ? ''
-                    : row.fecha_entrega}
+                  {row.estatus.id === SolicitudEstatusTipo.COMPLETO ? row.fecha_entrega : ''}
                 </Table.Cell>
                 <Table.Cell>
                   <SolicitudEstatus
@@ -68,7 +69,6 @@ export const Solicitudes = () => {
                   />
                 </Table.Cell>
                 <Table.Cell>{row.estatus.descripcion}</Table.Cell>
-                <Table.Cell>{row.notificacion}</Table.Cell>
               </Table.Row>
             ))}
         </Table.Body>

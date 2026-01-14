@@ -124,7 +124,6 @@ class SolicitudResponseSchema(BaseModel):
     estatus: SolicitudEstatusSchema
     estudiante: EstudianteSchema
     constancia: ConstanciaSchema
-    notificacion: Optional[str] = None
     trabajador: TrabajadorSchema
     folio: str
 
@@ -153,11 +152,24 @@ class SolicitudSalida(SolicitudBase):
 class EncuestaSatisfaccionCreate(BaseModel):
     estudiante_id: int
     calificacion: int
+    sugerencia: str
 
 class EncuestaSatisfaccionSalida(BaseModel):
     id: int
     estudiante_id: int
     calificacion: int
+    sugerencia: str
     
     class Config:
         orm_mode = True
+
+# Comprobante de pago con factura
+
+class ComprobanteSalida(BaseModel):
+    id: str
+    estudiante_id: str
+    comprobante_pago: Optional[str] = None
+    estado_validacion: str
+
+    class Config:
+        from_attributes = True

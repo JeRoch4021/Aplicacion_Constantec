@@ -6,8 +6,6 @@ from crud import crud_estudiante
 from paquetes import schemas
 from autenticacion.seguridad import get_current_user
 from typing import Any
-from autenticacion.seguridad import verify_password, create_access_token
-from comun.response import Response
 
 router = APIRouter()
 
@@ -19,15 +17,7 @@ def get_db():
     finally:
         db.close()
 
-# @router.put("/cambiar-contrasena", response_model=schemas.EstudiantesSalida)
-# def cambiar_contrasena(data: schemas.EstudiantesContrasenaUpdate, db: Session = Depends(get_db)):
-#     estudiante_actualizado = crud_estudiante.actualizar_contrasena(db, data.no_control, data.nuevo_password)
-#     if not estudiante_actualizado:
-#         raise HTTPException (detail="Estudiante no encontrado", status_code=404)
-#     return estudiante_actualizado
-
-
-@router.get("/{no_control}/", response_model=schemas.EstudiantesSalida)
+@router.get("/{no_control}", response_model=schemas.EstudiantesSalida)
 def buscar_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, no_control)
     if not estudiante:
@@ -38,8 +28,7 @@ def buscar_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dic
     
     return estudiante
 
-
-@router.get("/obtener-estudiantes", response_model=list[schemas.EstudiantesSalida])
+@router.get("/todos_estudiantes", response_model=list[schemas.EstudiantesSalida])
 def listar_estudiantes (db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     estudiante = crud_estudiante.listar_estudiantes(db)
 

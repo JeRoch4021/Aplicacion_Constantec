@@ -12,7 +12,7 @@ export type SolicitudPayload = {
 
 const createSolicitud = async (data: SolicitudPayload) => {
   const response = await axiosClient.post(
-    'http://localhost:8000/v1/solicitudes/',
+    '/v1/solicitudes/',
     data,
     {
       headers: {

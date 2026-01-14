@@ -9,6 +9,10 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true
       },
+      '/logout': {
+        target: 'http://localhost:8000',
+        changeOrigin: true
+      },
       '/admin-access': {
         target: 'http://localhost:8000',
         changeOrigin: true

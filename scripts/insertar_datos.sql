@@ -4,15 +4,15 @@ create database constantec;
 use constantec;
 
 INSERT INTO constancia_tipos VALUES
-('Constancia de Inscritos', 'Documento que certifica que un estudiante está actualmente inscrito en una institución educativa, indicando generalmente el semestre o ciclo escolar en curso.'),
-('Constancia de Kardex', 'Documento que muestra el historial académico del estudiante, incluyendo todas las materias cursadas, calificaciones obtenidas y los periodos en los que se cursaron.'),
-('Constancia para el Seguro Social', 'Documento requerido por el IMSS u otra institución de salud, que valida que el estudiante está inscrito y tiene derecho a recibir atención médica como parte del servicio social o como estudiante activo.'),
-('Constancia con Calificaciones del Semestre Anterior', 'Documento que detalla las materias cursadas y calificaciones obtenidas en el semestre inmediatamente anterior al actual.'),
-('Constancia con Calificaciones de Dos Semestres Anteriores', 'Similar a la anterior, pero incluye las materias y calificaciones de los dos semestres previos al actual.'),
-('Constancia de Egreso', 'Documento que certifica que el estudiante ha concluido la totalidad de sus estudios académicos, aunque aún no haya recibido el título oficial.'),
-('Constancia de Título en Trámite', 'Documento que indica que el egresado ya inició el proceso de titulación y que el título profesional está en trámite ante la autoridad educativa correspondiente.'),
-('Constancia de Pago', 'Documento que acredita que el estudiante ha realizado el pago correspondiente a su inscripción o colegiatura. Incluye detalles como el monto pagado, la fecha de pago y el semestre o ciclo escolar al que corresponde dicho pago.'),
-('Constancia Personalizada', 'Descripción personalizada ingresada por el estudiante desde la aplicación web.');
+('Constancia de inscritos', 'Documento que certifica que un estudiante está actualmente inscrito en una institución educativa, indicando generalmente el semestre o ciclo escolar en curso.'),
+('Constancia de promedio general', 'Documento que muestra el promedio general de todos los semestre cursados por el estudiante, sirviendo como prueba de que el estudiante aún sigue formando parte de la institución.'),
+('Constancia de promedio semestre anterior', 'Documento que detalla las materias cursadas y calificaciones obtenidas en el semestre inmediatamente anterior al actual.'),
+('Constancia de promedio dos últimos semestres', 'Documento que detalla las materias cursadas y calificaciones obtenidas en los dos semestres previos al actual.'),
+('Constancia de egresado', 'Documento que el estudiante ha concluido en totalidad de sus estudios superiores, aunque aún no haya recibido el título oficial.'),
+('Constancia de bachillerato', 'Documento que certifica que el estudiante ha concluido la totalidad de sus estudios medio superior, aunque aún no haya recibido el certificado oficial.'),
+('Constancia de maestría', 'Documento que indica que el egresado a iniciado el proceso de maestría y que cuenta con su título profesional ante la autoridad educativa correspondiente.'),
+('Constancia de título en trámite', 'Documento que acredita que el estudiante ha finalizado su carrera y queda en espera de su título.'),
+('Constancia con número de seguro social', 'Documento que incluye el número de seguro social.');
 
 INSERT INTO solicitud_estatus VALUES 
 ('pendiente', 'La solicitud esta pendiente' ),
@@ -51,6 +51,7 @@ SELECT * FROM constancia_opciones
 SELECT * FROM encuesta_satisfaccion
 SELECT * FROM constancias
 SELECT * FROM trabajadores
+SELECT * FROM comprobantes_pago;
 
 delete from estudiantes where id=1;
 delete from usuarios_administradores where id=1;

@@ -51,23 +51,6 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
 
     except Exception as ex:
         raise ex
-    
-
-    # 1. Check if user exists and is not disabled (optional check)
-    # if not user or (hasattr(user, 'disabled') and user.disabled):
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="Incorrect username or password", # Keep messages generic for security
-    #         headers={"WWW-Authenticate": "Bearer"},
-    #     )
-
-    # 2. Verify the password
-    # if not verify_password(form_data.password, user.hashed_password):
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="Incorrect username or password",
-    #         headers={"WWW-Authenticate": "Bearer"},
-    #     )
 
     # 3. User is authenticated, create the JWT
     # You can include additional data in the token if needed (the 'sub' claim is standard for subject/username)

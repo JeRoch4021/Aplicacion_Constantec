@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database.connection import SessionLocal
 from crud import crud_estudiante
 from paquetes import schemas
-from models.tables import Solicitudes
+from models.tables import Solicitudes, Constancias, ConstanciaOpciones
 from sqlalchemy.orm import joinedload
 import logging
 from autenticacion.seguridad import get_current_user
@@ -36,7 +36,9 @@ def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Ses
 
     response = db.query(Solicitudes).options(
         joinedload(Solicitudes.estudiante),
-        joinedload(Solicitudes.constancia),
+        joinedload(Solicitudes.constancia)
+            .joinedload(Constancias.opciones)
+            .joinedload(ConstanciaOpciones.tipo),
         joinedload(Solicitudes.estatus),
     ).filter(Solicitudes.id == solicitud.id).first()
 
@@ -49,7 +51,7 @@ def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depen
         raise HTTPException(detail="Constancia no encontrada", status_code=404)
     return {"Estado: ": estado}
 
-@router.put("/actualizar-estado")
+@router.put("/nuevo_estado")
 def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     solicitud = crud_estudiante.actualizar_estado_solicitud(db, data.id_solicitud, data.nuevo_estado)
     if not solicitud:
@@ -60,16 +62,18 @@ def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(
 def historial_estudiante(id_estudiante: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     return crud_estudiante.obtener_solicitudes(db, id_estudiante)
 
-@router.get("/obtener-solicitudes/", response_model=list[schemas.SolicitudResponseSchema])
+@router.get("/datos_solicitud", response_model=list[schemas.SolicitudResponseSchema])
 def listar_solicitudes(db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     return db.query(Solicitudes).options(
         joinedload(Solicitudes.estatus),
         joinedload(Solicitudes.estudiante),
-        joinedload(Solicitudes.constancia),
+        joinedload(Solicitudes.constancia)
+            .joinedload(Constancias.opciones)
+            .joinedload(ConstanciaOpciones.tipo),
         joinedload(Solicitudes.trabajador)
     ).all()
 
-@router.delete("/eliminar-solicitud/{solicitud_id}", status_code=status.HTTP_200_OK)
+@router.delete("/{solicitud_id}", status_code=status.HTTP_200_OK)
 def eliminar_solicitud(id_solicitud: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
 

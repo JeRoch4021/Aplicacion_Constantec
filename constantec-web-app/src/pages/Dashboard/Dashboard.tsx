@@ -8,6 +8,8 @@ import { jwtDecode } from "jwt-decode"
 import { useEffect, useState } from 'react'
 import logo from '../../assets/images/constantec_logo.jpg'
 import profile from '../../assets/images/profile.png'
+import { ValidacionRequisitos } from '../validacion-requisitos'
+import { PerfilUsuario } from '../obtener-usuario'
 
 export const Dashboard = () => {
   const [error, setError] = useState<string | null>(null)
@@ -71,9 +73,11 @@ export const Dashboard = () => {
       <Tabs.Root defaultValue="solicitudes" className="w-full">
         <Tabs.List className="flex border-b gap-4 p-4">
           <Tabs.Trigger value="solicitudes">Solicitudes</Tabs.Trigger>
+          <Tabs.Trigger value="Informacion">Información Personal</Tabs.Trigger>
+          <Tabs.Trigger value="validar">Validar Requisitos</Tabs.Trigger>
           <Tabs.Trigger value="crear">Crear Solicitud</Tabs.Trigger>
-          <Tabs.Trigger value="encuesta">Encuesta</Tabs.Trigger>
           <Tabs.Trigger value="tutorial">Tutorial</Tabs.Trigger>
+          <Tabs.Trigger value="encuesta">Encuesta</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="solicitudes" className="p-4">
@@ -81,19 +85,29 @@ export const Dashboard = () => {
             <Solicitudes />
           </Flex>
         </Tabs.Content>
+        <Tabs.Content value="Informacion" className="p-4">
+          <Flex width="100%" justify="center">
+            <PerfilUsuario />
+          </Flex>
+        </Tabs.Content>
+        <Tabs.Content value="validar" className="p-4">
+          <Flex width="100%" justify="center">
+            <ValidacionRequisitos />
+          </Flex>
+        </Tabs.Content>
         <Tabs.Content value="crear" className="p-4">
           <Flex width="100%" justify="center">
             <SolicitudFormulario />
           </Flex>
         </Tabs.Content>
-        <Tabs.Content value="encuesta" className="p-4">
-          <Flex width="100%" justify="center">
-            <EncuestaSatisfaccion />
-          </Flex>
-        </Tabs.Content>
         <Tabs.Content value="tutorial" className="p-4">
           <Flex width="100%" justify="center">
             <Tutorial />
+          </Flex>
+        </Tabs.Content>
+        <Tabs.Content value="encuesta" className="p-4">
+          <Flex width="100%" justify="center">
+            <EncuestaSatisfaccion />
           </Flex>
         </Tabs.Content>
       </Tabs.Root>

@@ -64,6 +64,9 @@ class SolicitudEstatus(Base):
 
     solicitudes = relationship("Solicitudes", back_populates="estatus")
 
+    def __str__(self):
+        return f"{self.tipo} - {self.descripcion}"
+
 # Tabla de solicitudes
 class Solicitudes(Base):
     __tablename__ = "solicitudes"
@@ -74,9 +77,8 @@ class Solicitudes(Base):
     solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
     fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
     fecha_entrega = Column(Date, nullable=True)
-    trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=False)
-    folio = Column(String(100), nullable=True)
-    notificacion = Column(String(100), nullable=True)
+    trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=True)
+    folio = Column(String(100), nullable=False)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
     constancia = relationship("Constancias", back_populates="solicitudes")
@@ -87,7 +89,7 @@ class Solicitudes(Base):
 class Trabajador(Base):
     __tablename__ = "trabajadores"
 
-    id_trabajador = Column(String(30), primary_key=True, index=True)
+    id_trabajador = Column(String(30), primary_key=True, index=True, unique=True)
     nombre = Column(String(100), nullable=False)
     apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
@@ -99,12 +101,27 @@ class Trabajador(Base):
 
     solicitudes = relationship("Solicitudes", back_populates="trabajador")
 
+    def __str__(self):
+        return f"{self.id_trabajador}"
+
 # Tabla de encuestas
 class EncuestaSatisfaccion(Base):
     __tablename__ = "encuesta_satisfaccion"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     calificacion = Column(Integer, nullable=False)
-    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=True)
+    sugerencia = Column(String(500), nullable=True)
+    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), unique=True, nullable=True)
 
+    estudiante = relationship("Estudiantes")
+
+class ComprobantesPago(Base):
+    __tablename__ = "comprobantes_pago"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    factura = Column(String(255), nullable=False)
+    estado_validacion = Column(String(50), nullable=False) #default="SIN_COMPROBANTE")
+    motivo_rechazo = Column(String(255), nullable=True)
+    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
+    
     estudiante = relationship("Estudiantes")
