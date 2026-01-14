@@ -30,7 +30,7 @@ async def guardar_comprobante(
     if not estudiante:
         raise HTTPException(status_code=404, detail="Estudiante no encontrado")
 
-    # 3. Validar extensión
+    # 3. Validar si el archivo exite
     if not os.path.exists(UPLOAD_DIR):
         try:
             os.makedirs(UPLOAD_DIR, exist_ok=True)
