@@ -50,17 +50,17 @@ export const SolicitudFormulario = () => {
     e.preventDefault()
 
     if (descripcion.length === 0) {
-      setErrorForm('Agrega una descripción')
+      setErrorForm('La descripción es obligatoria')
       return
     }
 
     if (opciones.length === 0) {
-      setErrorForm('Selecciona al menos una opcion')
+      setErrorForm('Selecciona al menos un tipo de constancia')
       return
     }
 
     if (folio.length === 0) {
-      setErrorForm('Agrega el folio')
+      setErrorForm('El folio de pago es obligatorio')
       return
     }
 
@@ -68,7 +68,7 @@ export const SolicitudFormulario = () => {
       setErrorForm('')
     }
 
-    const estudiante_id = localStorage.getItem('estudiante_id') || "";
+    const estudiante_id = localStorage.getItem('estudiante_id') || ''
 
     const peticion: SolicitudPayload = {
       descripcion: descripcion.trim(),
@@ -88,144 +88,100 @@ export const SolicitudFormulario = () => {
     setOpciones(nuevasOpciones)
   }
 
-  console.log(error, !error, !!error)
-
   return (
     <Box width="700px" mt="3">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
+
+        {/* DESCRIPCIÓN */}
         <Text size="3" weight="bold">
-          Descripcion
+          Descripción de la solicitud
         </Text>
         <TextArea
-          placeholder="Descripcion de la constancia"
+          aria-label="Descripción de la solicitud"
+          placeholder="Ejemplo: Solicito constancia para trámite de beca"
           mt="2"
           value={descripcion}
           disabled={loading}
-          onChange={(e) => {
-            e.preventDefault()
-            setDescripcion(e?.target?.value)
-          }}
+          onChange={(e) => setDescripcion(e.target.value)}
         />
+
+        {/* TIPO DE CONSTANCIA */}
+        <Text size="3" weight="bold" mt="3">
+          Tipo de constancia solicitada
+        </Text>
+        <Text size="2" color="gray">
+          Selecciona una o más opciones según tu necesidad
+        </Text>
+
         <Box mt="2" mb="2">
           <CheckboxCards.Root
             disabled={loading}
-            defaultValue={[]}
-            value={opciones || []}
+            value={opciones}
             columns={{ initial: '1', sm: '3' }}
           >
-            <CheckboxCards.Item
-              value="1"
-              onClick={() => {
-                seleccionarOpcion('1')
-              }}
-            >
-              <Text>Inscritos</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="2"
-              onClick={() => {
-                seleccionarOpcion('2')
-              }}
-            >
-              <Text>Kardex</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="3"
-              onClick={() => {
-                seleccionarOpcion('3')
-              }}
-            >
-              <Text>Seguro Social</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="4"
-              onClick={() => {
-                seleccionarOpcion('4')
-              }}
-            >
-              <Text>Calificaciones del Semestre Anterior</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="5"
-              onClick={() => {
-                seleccionarOpcion('5')
-              }}
-            >
-              <Text>Calificaciones de Dos Semestres Anteriores</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="6"
-              onClick={() => {
-                seleccionarOpcion('6')
-              }}
-            >
-              <Text>Egreso</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="7"
-              onClick={() => {
-                seleccionarOpcion('7')
-              }}
-            >
-              <Text>Título en Trámite</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="8"
-              onClick={() => {
-                seleccionarOpcion('8')
-              }}
-            >
-              <Text>Pago</Text>
-            </CheckboxCards.Item>
-            <CheckboxCards.Item
-              value="9"
-              onClick={() => {
-                seleccionarOpcion('9')
-              }}
-            >
-              <Text>Personalizada</Text>
-            </CheckboxCards.Item>
+            {[
+              { id: '1', text: 'Inscritos' },
+              { id: '2', text: 'Kardex' },
+              { id: '3', text: 'Seguro Social' },
+              { id: '4', text: 'Calificaciones del Semestre Anterior' },
+              { id: '5', text: 'Calificaciones de Dos Semestres Anteriores' },
+              { id: '6', text: 'Egreso' },
+              { id: '7', text: 'Título en Trámite' },
+              { id: '8', text: 'Pago' },
+              { id: '9', text: 'Personalizada' },
+            ].map((opcion) => (
+              <CheckboxCards.Item
+                key={opcion.id}
+                value={opcion.id}
+                onClick={() => seleccionarOpcion(opcion.id)}
+              >
+                <Text>{opcion.text}</Text>
+              </CheckboxCards.Item>
+            ))}
           </CheckboxCards.Root>
         </Box>
+
+        {/* FOLIO */}
         <Text size="3" weight="bold">
           Folio de factura de pago
         </Text>
-          <TextArea
-            placeholder="Ingresa el folio"
-            mt="2"
-            value={folio}
-            disabled={loading}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              const soloNumeros = e.target.value.replace(/\D/g, '')
-              setFolio(soloNumeros)
-            }}
-            style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', marginBottom: 12, width: '100%' }}
-          />
+        <TextArea
+          aria-label="Folio de factura de pago"
+          placeholder="Ejemplo: 12345678 (solo números)"
+          mt="2"
+          value={folio}
+          disabled={loading}
+          onChange={(e) =>
+            setFolio(e.target.value.replace(/\D/g, ''))
+          }
+        />
+
+        {/* OTROS */}
         <Text size="3" weight="bold">
-          Otros
+          Otros (opcional)
         </Text>
         <TextArea
-          placeholder="Describe otros motivos"
+          aria-label="Otros motivos de la solicitud"
+          placeholder="Describe aquí otro motivo si no aparece en la lista"
           mt="2"
           value={otros}
           disabled={loading}
-          onChange={(e) => {
-            e.preventDefault()
-            setOtros(e?.target?.value)
-          }}
+          onChange={(e) => setOtros(e.target.value)}
         />
+
+        {/* BOTÓN */}
         <Flex width="100%" justify="end" mt="2">
           <Button
             type="submit"
-            mt="2"
             style={{ width: '200px' }}
             size="3"
             disabled={loading}
           >
-            {loading && <Spinner />}
-            {!loading && 'Enviar'}
+            {loading ? <Spinner /> : 'Enviar solicitud'}
           </Button>
         </Flex>
+
+        {/* ERRORES */}
         {!!errorForm && (
           <Callout.Root color="red" mt="3">
             <Callout.Icon>
@@ -234,12 +190,16 @@ export const SolicitudFormulario = () => {
             <Callout.Text>{errorForm}</Callout.Text>
           </Callout.Root>
         )}
+
+        {/* ÉXITO */}
         {status === 'success' && !errorForm && (
           <Callout.Root color="green" mt="3">
             <Callout.Icon>
               <CheckCircledIcon />
             </Callout.Icon>
-            <Callout.Text>Se guardo exitosamente</Callout.Text>
+            <Callout.Text>
+              La solicitud se guardó exitosamente
+            </Callout.Text>
           </Callout.Root>
         )}
       </form>
