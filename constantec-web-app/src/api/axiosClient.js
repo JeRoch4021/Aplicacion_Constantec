@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:8000', // Replace with your API base URL
+  baseURL: '/', // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
     // Add other custom headers here
@@ -24,8 +24,13 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle errors globally
-    return Promise.reject(error)
+    if (error.response?.status === 401) {
+      // Token expirado, redirigir al login
+      alert("Su sessión ha expirado por inactividad.");
+      localStorage.clear();
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
   }
 )
 

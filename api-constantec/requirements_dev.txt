@@ -13,3 +13,5 @@ bcrypt<4.0
 python-jose[cryptography]
 factory_boy
 ipython
+sqladmin
+itsdangerous==2.2.0
