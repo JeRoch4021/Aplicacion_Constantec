@@ -24,7 +24,8 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config.url.includes('/v1/login/');
+    if (error.response?.status === 401 && !isLoginRequest) {
       // Token expirado, redirigir al login
       alert("Su sessión ha expirado por inactividad.");
       localStorage.clear();
