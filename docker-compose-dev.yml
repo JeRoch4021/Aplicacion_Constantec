@@ -16,12 +16,13 @@ services:
       - DB_PASSWORD=YourStrong!Passw0rd
       - DB_NAME=constantec
       - PYTHONUNBUFFERED=1
+      - FORWARDED_ALLOW_IPS=*
     depends_on:
       - sqlserver
   
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sql_server
+    container_name: sql-server
     restart: always
     environment:
       - ACCEPT_EULA=Y
@@ -30,5 +31,19 @@ services:
       - "1433:1433"
     volumes:
       - sql_data:/var/opt/mssql
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: constantec-ngrok
+    restart: always
+    ports:
+      - "4040:4040"
+    environment:
+      - NGROK_AUTHTOKEN=33ogMhz8hgEPNKksyShXOfM4npW_5mtBQx18EGpuqo5etGX83
+    command:
+      - "http"
+      - "constantec-dev:8000"
+    depends_on:
+      - fastapi
 volumes:
   sql_data:
