@@ -1,13 +1,13 @@
-fastapi
+fastapi==0.110.0
 uvicorn[standard]
 black
 isort
-sqlalchemy
+sqlalchemy==2.0.25
 Schemas
 pydantic
 typing
 datetime
-pyodbc
+psycopg2-binary==2.9.9
 passlib[bcrypt]
 bcrypt<4.0
 python-jose[cryptography]

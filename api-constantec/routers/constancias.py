@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.connection import SessionLocal
-from models import tables
+from models.tables import Constancias
 from paquetes import schemas
 from autenticacion.seguridad import get_current_user
 from typing import Any
@@ -18,11 +18,11 @@ def get_db():
 
 @router.get("/constancias", response_model=list[schemas.ConstanciaSalida])
 def listar_constancias(db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    return db.query(tables.Constancias).all()
+    return db.query(Constancias).all()
 
 @router.get("/{id_constancia}", response_model=schemas.ConstanciaSalida)
 def buscar_constancia(id_constancia: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    constancia = db.query(tables.Constancia).filter(tables.Constancia.ID_Constancia == id_constancia).first()
+    constancia = db.query(Constancias).filter(Constancias.id == id_constancia).first()
     if not constancia:
         raise HTTPException(detial="Constancia no encontrada", status_code=404)
     return constancia

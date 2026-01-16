@@ -12,9 +12,9 @@ import {
 import { useGetEncuestaEstatus } from './useGetEncuestaEstatus'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 
-const enviarEncuesta = async (estudiante_id: number, calificacion: number, sugerencia: string) => {
+const enviarEncuesta = async (id_estudiante: number, calificacion: number, sugerencia: string) => {
   const response = await axiosClient.post('/v1/encuestas/', {
-    estudiante_id,
+    id_estudiante,
     calificacion,
     sugerencia
   })
@@ -22,8 +22,8 @@ const enviarEncuesta = async (estudiante_id: number, calificacion: number, suger
 }
 
 export const EncuestaSatisfaccion = () => {
-  const estudiante_id = Number (localStorage.getItem('estudiante_id'))
-  const { data: yaRespondio, isLoading, refetch } = useGetEncuestaEstatus(estudiante_id)
+  const id_estudiante = Number (localStorage.getItem('id_estudiante'))
+  const { data: yaRespondio, isLoading, refetch } = useGetEncuestaEstatus(id_estudiante)
 
   const [valor, setValor] = useState<number | null>(null)
   const [sugerencia, setSugerencia] = useState<string>('')
@@ -36,7 +36,7 @@ export const EncuestaSatisfaccion = () => {
     setErrorForm('')
     setStatus('loading')
     try {
-      await enviarEncuesta(estudiante_id, valor!, sugerencia.trim())
+      await enviarEncuesta(id_estudiante, valor!, sugerencia.trim())
       await refetch()
       setStatus('success')
       setEnviado(true)

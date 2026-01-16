@@ -7,21 +7,16 @@ from models.tables import Base
 
 logger = logging.getLogger(__name__)
 
-driver = 'ODBC Driver 18 for SQL Server'
-
 DB_HOST = os.getenv('DB_HOST', '')
 DB_PORT = os.getenv('DB_PORT', '')
 DB_USER = os.getenv('DB_USER', '')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 DB_NAME = os.getenv('DB_NAME', '')
 
-database_url = (
-    f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
-    f"?driver={driver.replace(' ', '+')}&TrustServerCertificate=yes&Encrypt=yes"
-    )
+database_url = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 try:
-    engine = create_engine(database_url)    
+    engine = create_engine(database_url, pool_pre_ping=True)    
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     Base.metadata.create_all(engine)
     with engine.connect() as connexion: 

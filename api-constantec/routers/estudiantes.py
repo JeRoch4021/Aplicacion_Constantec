@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.connection import SessionLocal
-from database.init_db import init_db
-from crud import crud_estudiante
+from consultas.consulta_estudiante import obtener_estudiante_por_no_control
 from paquetes import schemas
+from models.tables import Estudiantes
 from autenticacion.seguridad import get_current_user
 from typing import Any
 
@@ -19,7 +19,7 @@ def get_db():
 
 @router.get("/{no_control}", response_model=schemas.EstudiantesSalida)
 def buscar_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    estudiante = crud_estudiante.obtener_estudiante_por_no_control(db, no_control)
+    estudiante = obtener_estudiante_por_no_control(db, no_control)
     if not estudiante:
         raise HTTPException (detail="Estudiante no encontrado", status_code=404)
     
@@ -30,7 +30,7 @@ def buscar_perfil(no_control: str, db: Session = Depends(get_db), auth_user: dic
 
 @router.get("/todos_estudiantes", response_model=list[schemas.EstudiantesSalida])
 def listar_estudiantes (db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    estudiante = crud_estudiante.listar_estudiantes(db)
+    estudiante = db.query(Estudiantes).all()
 
     if not estudiante:
         raise HTTPException (detail="Estudiantes no encontrados", status_code=404)

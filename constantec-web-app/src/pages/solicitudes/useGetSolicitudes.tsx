@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import axiosClient from '../../api/axiosClient'
 
-export function useGetSolicitudes(estudiante_id) {
+export function useGetSolicitudes(id_estudiante) {
   return useQuery({
     queryKey: ['solicitudes'],
     queryFn: async () => {
-      const { data } = await axiosClient.get(`/v1/solicitudes/${estudiante_id}`)
+      const { data } = await axiosClient.get(`/v1/solicitudes/${id_estudiante}`)
       return data
     },
-    enabled: !!estudiante_id,
+    enabled: !!id_estudiante,
   })
 }

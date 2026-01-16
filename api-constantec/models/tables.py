@@ -31,15 +31,15 @@ class ConstanciaTipos(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     tipo = Column(String(100), nullable=False)
-    descripcion = Column(String, nullable=False)
+    descripcion = Column(String(255), nullable=False)
 
 # Tabla de opciones de constancia
 class ConstanciaOpciones(Base):
     __tablename__ = "constancia_opciones"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    constancias_tipo_id = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
+    id_constancia = Column(Integer, ForeignKey("constancias.id"), nullable=False)
+    id_constancias_tipo = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
 
     tipo = relationship("ConstanciaTipos", backref="opciones")
 
@@ -48,7 +48,7 @@ class Constancias(Base):
     __tablename__ = "constancias"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    descripcion = Column(String(100), nullable=True)
+    descripcion = Column(String(100), nullable=False)
     otros = Column(String(100), nullable=True)
 
     solicitudes = relationship("Solicitudes", back_populates="constancia")
@@ -60,7 +60,7 @@ class SolicitudEstatus(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     tipo = Column(String(100), nullable=False)
-    descripcion = Column(String, nullable=False)
+    descripcion = Column(String(100), nullable=False)
 
     solicitudes = relationship("Solicitudes", back_populates="estatus")
 
@@ -72,12 +72,12 @@ class Solicitudes(Base):
     __tablename__ = "solicitudes"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    estudiantes_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
-    constancia_id = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    solicitud_estatus_id = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
+    id_estudiantes = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
+    id_constancia = Column(Integer, ForeignKey("constancias.id"), nullable=False)
+    id_solicitud_estatus = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
     fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
     fecha_entrega = Column(Date, nullable=True)
-    trabajador_id = Column(String(30), ForeignKey("trabajadores.id_trabajador"), nullable=True)
+    id_trabajador = Column(Integer, ForeignKey("trabajadores.id"), nullable=True)
     folio = Column(String(100), nullable=False)
 
     estudiante = relationship("Estudiantes", back_populates="solicitudes")
@@ -89,7 +89,7 @@ class Solicitudes(Base):
 class Trabajador(Base):
     __tablename__ = "trabajadores"
 
-    id_trabajador = Column(String(30), primary_key=True, index=True, unique=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String(100), nullable=False)
     apellidos = Column(String(100), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
@@ -102,7 +102,7 @@ class Trabajador(Base):
     solicitudes = relationship("Solicitudes", back_populates="trabajador")
 
     def __str__(self):
-        return f"{self.id_trabajador}"
+        return f"{self.id} - {self.nombre} {self.apellidos}"
 
 # Tabla de encuestas
 class EncuestaSatisfaccion(Base):
@@ -111,7 +111,7 @@ class EncuestaSatisfaccion(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     calificacion = Column(Integer, nullable=False)
     sugerencia = Column(String(500), nullable=True)
-    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), unique=True, nullable=True)
+    id_estudiante = Column(Integer, ForeignKey("estudiantes.id"), nullable=True)
 
     estudiante = relationship("Estudiantes")
 
@@ -120,8 +120,21 @@ class ComprobantesPago(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     factura = Column(String(255), nullable=False)
-    estado_validacion = Column(String(50), nullable=False) #default="SIN_COMPROBANTE")
+    id_estado_comprobante = Column(Integer, ForeignKey("estado_comprobante.id"), nullable=False)
     motivo_rechazo = Column(String(255), nullable=True)
-    estudiante_id = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
+    id_estudiante = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
     
     estudiante = relationship("Estudiantes")
+    estado = relationship("EstadoComprobante", back_populates="comprobante")
+
+class EstadoComprobante(Base):
+    __tablename__ = "estado_comprobante"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    tipo = Column(String(255), nullable=False)
+    descripcion = Column(String(100), nullable=False)
+    
+    comprobante = relationship("ComprobantesPago", back_populates="estado")
+
+    def __str__ (self):
+        return f"{self.tipo} - {self.descripcion}"

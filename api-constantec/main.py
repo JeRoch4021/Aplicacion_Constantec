@@ -11,6 +11,7 @@ from sqladmin.authentication import AuthenticationBackend
 from autenticacion.seguridad import decode_access_token, SECRET_KEY
 from database.connection import engine
 from starlette.requests import Request
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 import admin as AdminViews
 
 logging.basicConfig(
@@ -21,6 +22,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 app.add_middleware(
     CORSMiddleware,

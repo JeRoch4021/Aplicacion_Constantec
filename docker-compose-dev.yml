@@ -10,25 +10,33 @@ services:
     volumes:
       - ./api-constantec:/app
     environment:
-      - DB_HOST=sqlserver
-      - DB_PORT=1433
-      - DB_USER=sa
-      - DB_PASSWORD=YourStrong!Passw0rd
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
       - DB_NAME=constantec
       - PYTHONUNBUFFERED=1
+      - FORWARDED_ALLOW_IPS=*
     depends_on:
-      - sqlserver
+      db:
+        condition: service_healthy
   
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sql_server
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
     restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Passw0rd
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=constantec
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sql_data:/var/opt/mssql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d constantec"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
-  sql_data:
+  postgres_data:

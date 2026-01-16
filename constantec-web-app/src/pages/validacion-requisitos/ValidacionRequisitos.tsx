@@ -1,28 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Flex, Text, Button, Separator } from '@radix-ui/themes'
+import { Flex, Text, Button, Separator, Spinner } from '@radix-ui/themes'
 import { useGetUsuario } from './useGetUsuario'
 import { usePostComprobante } from './usePostComprobante'
 import { useGetEstadoComprobante } from './useGetEstadoComprobante'
 
-type EstadoValidacion =
-  | 'SIN_COMPROBANTE'
-  | 'PENDIENTE'
-  | 'RECHAZADO'
-  | 'APROBADO'
+export const IdEstadoComprobante = {
+  SIN_COMPROBANTE: 1,
+  PENDIENTE: 2,
+  RECHAZADO: 3,
+  APROBADO: 4
+} as const;
 
-type ValidacionData = {
-  estado: EstadoValidacion
-  motivo?: string
-  archivoNombre?: string
-  actualizadoEn?: string
-}
-
-// SOLO PARA PRUEBAS (si no hay nada en localStorage)
-const ESTADO_MOCK: EstadoValidacion = 'SIN_COMPROBANTE'
-
-const MOTIVO_RECHAZO_MOCK ='El comprobante no es legible o no corresponde al trámite.'
-
-const STORAGE_KEY = 'validacion_requisitos_alumno'
+type EstadoValidacion = typeof IdEstadoComprobante[keyof typeof IdEstadoComprobante];
 
 const MAX_MB = 5
 const MAX_BYTES = MAX_MB * 1024 * 1024
@@ -31,14 +20,13 @@ const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 export function ValidacionRequisitos() {
   const { data: estudiante } = useGetUsuario();
   const { mutate, isPending } = usePostComprobante();
-  const { data: comprobante, isLoading } = useGetEstadoComprobante(estudiante?.no_control)
+  const { data: comprobante } = useGetEstadoComprobante(estudiante?.no_control)
 
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
 
   const data = useMemo(() => {
-    return comprobante || { estado: 'SIN_COMPROBANTE' };
+    return comprobante || { estado: IdEstadoComprobante.SIN_COMPROBANTE };
   }, [comprobante])
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,10 +44,6 @@ export function ValidacionRequisitos() {
     }
     setFile(selected);
   }
-
-  /* =========================
-     SUBIR COMPROBANTE
-  ========================= */
 
   const handleEnviar = () => {
     if (!file || !estudiante?.no_control) {
@@ -84,15 +68,15 @@ export function ValidacionRequisitos() {
   
   const estadoTexto = useMemo(() => {
     const textos: Record<EstadoValidacion, string> = {
-      'SIN_COMPROBANTE': 'Sin comprobante',
-      'PENDIENTE': 'Pendiente de validación',
-      'RECHAZADO': 'Rechazado',
-      'APROBADO': 'Aprobado'
+      [IdEstadoComprobante.SIN_COMPROBANTE]: 'Sin comprobante',
+      [IdEstadoComprobante.PENDIENTE]: 'Pendiente de validación',
+      [IdEstadoComprobante.RECHAZADO]: 'Rechazado',
+      [IdEstadoComprobante.APROBADO]: 'Aprobado'
     };
     return textos[data.estado] || 'Desconocido';
   }, [data.estado]);
 
-  const puedeSubir = data.estado === 'SIN_COMPROBANTE' || data.estado === 'RECHAZADO';
+  const puedeSubir = data.estado === IdEstadoComprobante.SIN_COMPROBANTE || data.estado === IdEstadoComprobante.RECHAZADO;
 
   return (
     <Flex width="100%" justify="center">
@@ -111,37 +95,35 @@ export function ValidacionRequisitos() {
 
         <Text>
           <strong>Estado: </strong>
-          <Text color={data.estado === 'APROBADO' ? 'green' : data.estado === 'RECHAZADO' ? 'red' : 'orange'} mt="2">
+          <Text color={data.estado === IdEstadoComprobante.APROBADO ? 'green' : data.estado === IdEstadoComprobante.RECHAZADO ? 'red' : 'orange'} mt="2">
             {estadoTexto}
           </Text>
         </Text>
 
         {data.archivoNombre && <Text color="gray" size="2">Archivo registrado: {data.archivoNombre}</Text>}
 
-        {data.estado === 'PENDIENTE' && (
+        {data.estado === IdEstadoComprobante.PENDIENTE && (
           <Text color="gray" size="2">
-            Tu comprobante está en revisión. Espera la validación del personal
-            administrativo.
+            Tu comprobante está en revisión. Espera la validación del personal administrativo.
           </Text>
         )}
 
-        {data.estado === 'RECHAZADO' && data.motivo && (
+        {data.estado === IdEstadoComprobante.RECHAZADO && data.motivo_rechazo && (
           <Text color="red" weight="bold">
-            <strong>Motivo de rechazo:</strong> {data.motivo}
+            <strong>Motivo de rechazo:</strong> {data.motivo_rechazo}
           </Text>
         )}
 
-        {data.estado === 'APROBADO' && (
+        {data.estado === IdEstadoComprobante.APROBADO && (
           <Text color="green">
-            Tu comprobante fue aprobado. Ya puedes continuar con el trámite.
+            Tu comprobante está en revisión. Espera la validación del personal administrativo.
           </Text>
         )}
 
         <Separator size="4" />
 
-        {/* Subida */}
         {puedeSubir && (
-          <>
+          <Flex direction="column" gap="3">
             <Text weight="bold">Subir comprobante</Text>
 
             <input
@@ -155,14 +137,14 @@ export function ValidacionRequisitos() {
 
             <Flex justify="end">
               <Button disabled={!file || isPending} onClick={ handleEnviar }>
-                {loading ? 'Enviando...' : 'Enviar comprobante'}
+                {isPending ? <Spinner /> : 'Enviar comprobante'}
               </Button>
             </Flex>
 
             <Text color="gray" size="2">
               Tamaño máximo: {MAX_MB} MB. Formatos permitidos: PDF, JPG, PNG.
             </Text>
-          </>
+          </Flex>
         )}
       </Flex>
     </Flex>

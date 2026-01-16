@@ -1,13 +1,10 @@
-#from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import status, Response
 from paquetes import schemas
 from sqlalchemy.orm import Session
-#from sqlalchemy.orm.exc import NoResultFound
 from database.connection import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
-from crud import crud_estudiante
-from crud import crud_administrador
-from typing import Any
+from consultas.consulta_estudiante import obtener_estudiante_por_no_control
+from consultas.consulta_administrador import obtener_administrador_por_id
 from autenticacion.seguridad import verify_password, create_access_token
 from comun.response import Response as CommonResponse
 import logging
@@ -24,7 +21,6 @@ def get_db():
     finally:
         db.close()
 
-
 @router.post("/", response_model=CommonResponse)
 async def login_for_access_token(login_request: schemas.LoginRequest, response: Response, db: Session = Depends(get_db)):
     usuario = None
@@ -36,10 +32,10 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     """
     try: 
         if login_request.usuario.isdigit():
-            usuario = crud_estudiante.obtener_estudiante_por_no_control(db, login_request.usuario)
+            usuario = obtener_estudiante_por_no_control(db, login_request.usuario)
             tipo = "estudiante" if usuario else None
         else:
-            usuario = crud_administrador.obtener_administrador_por_id(db, login_request.usuario)
+            usuario = obtener_administrador_por_id(db, login_request.usuario)
             tipo = "admin" if usuario else None
         
         if usuario is None:
@@ -52,8 +48,7 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     except Exception as ex:
         raise ex
 
-    # 3. User is authenticated, create the JWT
-    # You can include additional data in the token if needed (the 'sub' claim is standard for subject/username)
+    # 3. Los usuarios son autenticados con JWT
     access_token_payload = {
         "sub": login_request.usuario,
         "tipo": tipo,
@@ -70,7 +65,7 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     # Devolvemos la respuesta, comprobando si es un administrador
     return CommonResponse(
         data = {"token" : access_token,
-                "estudiante_id": usuario.id,
+                "id_estudiante": usuario.id,
                 "tipo" : tipo}, 
                 success= True, 
                 messsage="autenticacion exitosa", 

@@ -68,7 +68,7 @@ export const SolicitudFormulario = () => {
       setErrorForm('')
     }
 
-    const estudiante_id = localStorage.getItem('estudiante_id') || "";
+    const estudiante_id = localStorage.getItem('id_estudiante') || "";
 
     const peticion: SolicitudPayload = {
       descripcion: descripcion.trim(),

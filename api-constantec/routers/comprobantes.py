@@ -54,8 +54,8 @@ async def guardar_comprobante(
     # 5. Guardar en la base de datos
     nuevo_comprobante = ComprobantesPago(
         factura = nombre_archivo,
-        estado_validacion = "PENDIENTE",
-        estudiante_id = estudiante.id
+        id_estado_comprobante = 2,
+        id_estudiante = estudiante.id
     )
 
     db.add(nuevo_comprobante)
@@ -65,7 +65,7 @@ async def guardar_comprobante(
     return CommonResponse(
         data = {"id" : nuevo_comprobante.id,
                 "archivo": nombre_archivo,
-                "estado" : nuevo_comprobante.estado_validacion}, 
+                "estado" : nuevo_comprobante.id_estado_comprobante}, 
                 success= True, 
                 messsage="Comprobante guardado exitosamente", 
                 error_code= None)
@@ -76,15 +76,15 @@ def obtener_estado_pago(no_control: str, db: Session = Depends(get_db)):
     
     # Buscamos el último comprobante subido
     comprobante = db.query(ComprobantesPago)\
-        .filter(ComprobantesPago.estudiante_id == estudiante.id)\
+        .filter(ComprobantesPago.id_estudiante == estudiante.id)\
         .order_by(ComprobantesPago.id.desc())\
         .first()
 
     if not comprobante:
-        return {"estado": "SIN_COMPROBANTE"}
+        return {"estado": 1}
 
     return {
-        "estado": comprobante.estado_validacion,
-        "motivo": comprobante.motivo_rechazo,
+        "estado": comprobante.id_estado_comprobante,
+        "motivo_rechazo": comprobante.motivo_rechazo,
         "archivoNombre": comprobante.factura
     }

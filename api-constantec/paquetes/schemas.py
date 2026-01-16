@@ -85,7 +85,7 @@ class EstudiantesSalida(EstudianteBase):
 # Trabajadores
 
 class TrabajadorSchema(BaseModel):
-    id_trabajador: str
+    id: int
     nombre: str
     apellidos: str
     fecha_nacimiento: date
@@ -131,8 +131,8 @@ class SolicitudResponseSchema(BaseModel):
         orm_mode = True
 
 class SolicitudBase(BaseModel):
-    estudiantes_id: int
-    solicitud_estatus_id: int
+    id_estudiantes: int
+    id_solicitud_estatus: int
     fecha_solicitud: date
     fecha_entrega: Optional[date] = None
 
@@ -150,13 +150,13 @@ class SolicitudSalida(SolicitudBase):
 # Encuesta de Satisfaccion
 
 class EncuestaSatisfaccionCreate(BaseModel):
-    estudiante_id: int
+    id_estudiante: int
     calificacion: int
     sugerencia: str
 
 class EncuestaSatisfaccionSalida(BaseModel):
     id: int
-    estudiante_id: int
+    id_estudiante: int
     calificacion: int
     sugerencia: str
     
@@ -167,9 +167,9 @@ class EncuestaSatisfaccionSalida(BaseModel):
 
 class ComprobanteSalida(BaseModel):
     id: str
-    estudiante_id: str
-    comprobante_pago: Optional[str] = None
-    estado_validacion: str
+    id_estudiante: str
+    id_estado_comprobante: int
+    motivo_rechazo: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        from_attributes = True  

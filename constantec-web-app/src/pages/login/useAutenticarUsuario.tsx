@@ -17,7 +17,7 @@ type AutenticarResponse = {
     error_code: string | null;
     data: {
         token: string;
-        estudiante_id: string;
+        id_estudiante: string;
         tipo: string;
     }
 }
@@ -35,7 +35,7 @@ const autenticarUsuario = async (data: AutenticarPayload) => {
   console.log(response.data)
   if (response.data?.data?.token) {
       localStorage.setItem('token', response.data?.data?.token);
-      localStorage.setItem('estudiante_id', response.data?.data?.estudiante_id);
+      localStorage.setItem('id_estudiante', response.data?.data?.id_estudiante);
   }
   return response.data
 }
