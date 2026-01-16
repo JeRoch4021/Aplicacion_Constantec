@@ -1,27 +1,20 @@
 FROM python:3.12.10-slim
 
-# Set work directory
+# Directorio de trabajo
 WORKDIR /app
 
-# Install ODBC drivers
-RUN apt-get update && apt-get install -y curl gnupg unixodbc unixodbc-dev
-
-# Add Microsoft's GPG key and repository for Debian 12
-RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && \
-    curl -sSL https://packages.microsoft.com/config/debian/12/prod.list -o /etc/apt/sources.list.d/mssql-release.list
-
-# Install the Microsoft ODBC Driver for SQL Server
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-    msodbcsql18 \
+# Intalar dependecias del sistema para PostgreSQL
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-
-# Install dependencies
+# Instalar dependencias de python
 COPY api-constantec/requirements_dev.txt ./
 RUN pip install --no-cache-dir -r requirements_dev.txt
 
 # Copiar todo el contenido de la carpeta local al contenedor
 COPY api-constantec/ .
 
-# Copy entrypoint script or start from command line (code will come from volume)
+# Comando de ejecución para FastAPI
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]

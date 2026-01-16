@@ -8,7 +8,9 @@ class UserAdmin(ModelView, model=Administradores):
     name_plural = "Usuarios"
 
     column_list = [Administradores.id, 
-                   Administradores.username]
+                   Administradores.username,
+                   Administradores.is_active,
+                   Administradores.fecha_creacion]
     
     form_overrides = {
         "password": PasswordField,

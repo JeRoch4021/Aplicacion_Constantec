@@ -30,8 +30,7 @@ insert into [dbo].[estudiantes] ([apellidos], [password], [correo_institucional]
 insert into [dbo].[Usuarios_administradores] ([username], [password], [is_active], [is_superuser]) values 
 ('admin', '$2b$12$71/Hi78TNE/eFLx.4j3UB.N5szktjHT0JJ1ArZL4ooDK79wPXa0dK', 1, 1);
 
-
-// para jeshua
+-- Solicitudes y Constancias
 insert into constancias values
 ('constancia para la universidad', NULL),
 ('constancia para cartilla militar', NULL);
@@ -39,7 +38,6 @@ insert into constancias values
 INSERT INTO solicitudes VALUES
 (1, 1, 1, '2025-05-28', NULL),
 (1, 2, 1, '2025-05-28', NULL);
-
 
 --- Consultas
 select * from usuarios_administradores;

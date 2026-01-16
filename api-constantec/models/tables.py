@@ -102,7 +102,7 @@ class Trabajador(Base):
     solicitudes = relationship("Solicitudes", back_populates="trabajador")
 
     def __str__(self):
-        return f"{self.id_trabajador}"
+        return f"{self.id_trabajador} - {self.nombre} {self.apellidos}"
 
 # Tabla de encuestas
 class EncuestaSatisfaccion(Base):
