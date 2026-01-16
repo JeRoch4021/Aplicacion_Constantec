@@ -27,7 +27,7 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "*.ngrok-free.app"],  # Vite dev server default
+    allow_origins=["http://localhost:5173"],  # Vite dev server default
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

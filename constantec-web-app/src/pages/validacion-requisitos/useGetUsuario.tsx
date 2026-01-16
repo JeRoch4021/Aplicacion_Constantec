@@ -13,14 +13,14 @@ export function getNoControlDeToken() {
 };
 
 export function useGetUsuario() {
-    const noControl = getNoControlDeToken();
+    const no_control = getNoControlDeToken();
 
     return useQuery({
-        queryKey: ['perfil de estudiante', noControl],
+        queryKey: ['perfil de estudiante', no_control],
         queryFn: async () => {
-            const { data } = await axiosClient.get(`/v1/estudiantes/${noControl}`);
+            const { data } = await axiosClient.get(`/v1/estudiantes/${no_control}`);
             return data;
         },
-        enabled: !!noControl,
+        enabled: !!no_control,
     });
 };

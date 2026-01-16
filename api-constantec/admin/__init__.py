@@ -4,7 +4,7 @@ from .constancias import ConstanciaTiposAdmin, ConstanciaOpcionesAdmin, Constanc
 from .solicitudes import SolicitudEstatusAdmin, SolicitudesAdmin
 from .encuestas import EncuestasAdmin
 from .trabajador import TrabajadorAdmin
-from .comprobantes import ComprobantesAdmin
+from .comprobantes import ComprobantesAdmin, EstadoComprobantesAdmin
 
 __all__ = ['UserAdmin',
            'EstudiantesAdmin',
@@ -15,4 +15,5 @@ __all__ = ['UserAdmin',
            'SolicitudesAdmin',
            'EncuestasAdmin',
            'ComprobantesAdmin',
+           'EstadoComprobantesAdmin',
            'TrabajadorAdmin']

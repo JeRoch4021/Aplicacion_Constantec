@@ -23,8 +23,8 @@ const SolicitudEstatus = (props) => {
 }
 
 export const Solicitudes = () => {
-  const estudiante_id = localStorage.getItem('estudiante_id') || "";
-  const { data } = useGetSolicitudes(estudiante_id)
+  const id_estudiante = localStorage.getItem('id_estudiante') || "";
+  const { data } = useGetSolicitudes(id_estudiante)
 
   return (
     <ScrollArea

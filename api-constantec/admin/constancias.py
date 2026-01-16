@@ -18,12 +18,12 @@ class ConstanciaOpcionesAdmin(ModelView, model=ConstanciaOpciones):
     name_plural = "Opciones de Constancias"
 
     column_list = [ConstanciaOpciones.id,
-                   ConstanciaOpciones.constancia_id,
-                   ConstanciaOpciones.constancias_tipo_id]
+                   ConstanciaOpciones.id_constancia,
+                   ConstanciaOpciones.id_constancias_tipo]
     
     form_columns = [ConstanciaOpciones.id,
-                    ConstanciaOpciones.constancia_id,
-                    ConstanciaOpciones.constancias_tipo_id]
+                    ConstanciaOpciones.id_constancia,
+                    ConstanciaOpciones.id_constancias_tipo]
 
 class ConstanciasAdmin(ModelView, model=Constancias):
     name = "Constancias"

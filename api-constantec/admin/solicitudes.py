@@ -18,16 +18,16 @@ class SolicitudesAdmin(ModelView, model=Solicitudes):
     name_plural = "Solicitudes"
 
     column_list = [Solicitudes.id,
-                   Solicitudes.estudiantes_id,
-                   Solicitudes.constancia_id,
+                   Solicitudes.id_estudiantes,
+                   Solicitudes.id_constancia,
                    Solicitudes.estatus,
                    Solicitudes.fecha_solicitud,
                    Solicitudes.fecha_entrega,
                    Solicitudes.trabajador,
                    Solicitudes.folio]
     
-    form_columns = [Solicitudes.estudiantes_id,
-                    Solicitudes.constancia_id,
+    form_columns = [Solicitudes.id_estudiantes,
+                    Solicitudes.id_constancia,
                     Solicitudes.estatus,
                     Solicitudes.fecha_solicitud,
                     Solicitudes.fecha_entrega,

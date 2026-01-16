@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database.connection import SessionLocal
-from crud import crud_estudiante
+from consultas.consulta_estudiante import crear_solicitud, estado_solicitud, actualizar_estado_solicitud, historial_solicitudes
 from paquetes import schemas
 from models.tables import Solicitudes, Constancias, ConstanciaOpciones
 from sqlalchemy.orm import joinedload
@@ -26,7 +26,7 @@ def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Ses
     if (getattr(data_constancia, "descripcion", None) is None or len(data_constancia.descripcion) == 0 ):
         raise HTTPException(status_code=400, detail="No se puede crear una solicitud sin descripcion")
 
-    solicitud = crud_estudiante.crear_solicitud(
+    solicitud = crear_solicitud(
         db, data_constancia.id_estudiante, 
         data_constancia.descripcion, 
         data_constancia.otros, 
@@ -45,22 +45,22 @@ def registrar_solicitud(data_constancia: schemas.CrearConstanciaRequest, db: Ses
     return response
 
 @router.post("/estado")
-def obtener_estado_constancia(data: schemas.SolicitudEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    estado = crud_estudiante.obtener_estado_constancia(db, data.id_solicitud)
+def estado (data: schemas.SolicitudEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
+    estado = estado_solicitud(db, data.id_solicitud)
     if not estado:
         raise HTTPException(detail="Constancia no encontrada", status_code=404)
     return {"Estado: ": estado}
 
 @router.put("/nuevo_estado")
 def actualizar_estado(data: schemas.SolicitudNuevoEstado, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    solicitud = crud_estudiante.actualizar_estado_solicitud(db, data.id_solicitud, data.nuevo_estado)
+    solicitud = actualizar_estado_solicitud(db, data.id_solicitud, data.nuevo_estado)
     if not solicitud:
         raise HTTPException(detail="Solicitud no encontrada", status_code=404)
     return {"mensaje": f"Estado actualizado a {data.nuevo_estado}"}
 
 @router.get("/{id_estudiante}", response_model=list[schemas.SolicitudResponseSchema])
-def historial_estudiante(id_estudiante: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
-    return crud_estudiante.obtener_solicitudes(db, id_estudiante)
+def historial (id_estudiante: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
+    return historial_solicitudes(db, id_estudiante)
 
 @router.get("/datos_solicitud", response_model=list[schemas.SolicitudResponseSchema])
 def listar_solicitudes(db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
@@ -73,7 +73,7 @@ def listar_solicitudes(db: Session = Depends(get_db), auth_user: dict[str, Any] 
         joinedload(Solicitudes.trabajador)
     ).all()
 
-@router.delete("/{solicitud_id}", status_code=status.HTTP_200_OK)
+@router.delete("/{id_solicitud}", status_code=status.HTTP_200_OK)
 def eliminar_solicitud(id_solicitud: int, db: Session = Depends(get_db), auth_user: dict[str, Any] = Depends(get_current_user)):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
 

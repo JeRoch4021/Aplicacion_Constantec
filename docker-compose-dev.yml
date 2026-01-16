@@ -6,7 +6,7 @@ services:
     image: jeshuarocha/constantec_dev:latest
     container_name: constantec-dev
     ports:
-      - "80:8000"
+      - "8000:8000"
     volumes:
       - ./api-constantec:/app
     environment:
@@ -34,7 +34,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myuser -d mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U myuser -d constantec"]
       interval: 10s
       timeout: 5s
       retries: 5

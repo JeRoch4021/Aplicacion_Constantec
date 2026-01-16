@@ -1,4 +1,4 @@
-from models.tables import ComprobantesPago
+from models.tables import ComprobantesPago, EstadoComprobante
 from sqladmin import ModelView
 
 class ComprobantesAdmin(ModelView, model=ComprobantesPago):
@@ -6,13 +6,25 @@ class ComprobantesAdmin(ModelView, model=ComprobantesPago):
     name_plural = "Comprobantes de Pago"
 
     column_list = [ComprobantesPago.id,
-                   ComprobantesPago.estudiante_id,
+                   ComprobantesPago.id_estudiante,
                    ComprobantesPago.factura,
-                   ComprobantesPago.estado_validacion,
+                   ComprobantesPago.estado,
                    ComprobantesPago.motivo_rechazo]
     
     form_columns = [ComprobantesPago.id,
-                    ComprobantesPago.estudiante_id,
+                    ComprobantesPago.id_estudiante,
                     ComprobantesPago.factura,
-                    ComprobantesPago.estado_validacion,
+                    ComprobantesPago.estado,
                     ComprobantesPago.motivo_rechazo]
+    
+class EstadoComprobantesAdmin(ModelView, model=EstadoComprobante):
+    name = "Estado de Comprobantes"
+    name_plural = "Estado de Comprobantes"
+
+    column_list = [EstadoComprobante.id,
+                   EstadoComprobante.tipo,
+                   EstadoComprobante.descripcion]
+    
+    form_columns = [EstadoComprobante.id,
+                    EstadoComprobante.tipo,
+                    EstadoComprobante.descripcion]
