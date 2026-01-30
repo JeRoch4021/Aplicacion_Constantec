@@ -1,10 +1,9 @@
-
 import { Flex, Tabs, Separator, Button, Avatar, Text } from '@radix-ui/themes'
 import { Solicitudes } from '../solicitudes'
 import { SolicitudFormulario } from '../solicitud-formulario/SolicitudFormulario'
 import { EncuestaSatisfaccion } from '../encuesta-satisfaccion/EncuestaSatisfaccion'
 import { Tutorial } from '../tutorial/Tutorial'
-import { jwtDecode } from "jwt-decode"
+import { jwtDecode } from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import logo from '../../assets/images/constantec_logo.jpg'
 import profile from '../../assets/images/profile.png'
@@ -16,54 +15,47 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const checkToken = () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token')
       if (token) {
         try {
-          const decoded: any = jwtDecode(token);
-          const tiempoActual = Date.now() / 1000; // Tiempo en segundos
+          const decoded: any = jwtDecode(token)
+          const tiempoActual = Date.now() / 1000 // Tiempo en segundos
 
           if (decoded.exp < tiempoActual) {
             // El token ya expiró antes de entrar
-            alert("Su sessión ha expirado. Por favor inicie sesión nuevamente.");
-            cerrarSession();
+            alert('Su sessión ha expirado. Por favor inicie sesión nuevamente.')
+            cerrarSession()
           }
         } catch (e) {
-          cerrarSession();
+          cerrarSession()
         }
       } else {
-        window.location.href = '/';
+        window.location.href = '/'
       }
-    };
+    }
 
-    checkToken();
+    checkToken()
 
-    const intervalo = setInterval(checkToken, 10000);
-    return () => clearInterval(intervalo);
-    
-  }, []);
+    const intervalo = setInterval(checkToken, 10000)
+    return () => clearInterval(intervalo)
+  }, [])
 
   const cerrarSession = () => {
-    localStorage.clear();
-    window.location.href = '/logout';
+    localStorage.clear()
+    window.location.href = '/logout'
   }
 
   return (
     <>
       <Flex width="100%" align="center" justify="between" p="1">
         <Flex direction="row" align="center">
-          <Avatar
-            src={logo}
-            fallback="A"
-          />
+          <Avatar src={logo} fallback="A" />
           <Text size="5" ml="2">
             Constantec
           </Text>
         </Flex>
         <Flex direction="row" align="center">
-          <Avatar
-            src={profile}
-            fallback="A"
-          />
+          <Avatar src={profile} fallback="A" />
           <Button variant="soft" ml="2" onClick={cerrarSession}>
             Cerrar sesion
           </Button>

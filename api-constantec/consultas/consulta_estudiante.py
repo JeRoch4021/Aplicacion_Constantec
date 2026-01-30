@@ -1,29 +1,38 @@
-from fastapi import HTTPException
-from sqlalchemy.orm import Session
-#from Models.security import cifrar_contrasena
-from models.tables import Estudiantes, Solicitudes, Constancias, ConstanciaOpciones, EncuestaSatisfaccion
-from datetime import date
-from autenticacion.seguridad import get_password_hash
-from sqlalchemy.orm import joinedload
 import logging
+from datetime import date
+from enum import Enum
+
+from fastapi import HTTPException
+from sqlalchemy.orm import Session, joinedload
+
+from autenticacion.seguridad import get_password_hash
+from models.tables import (
+    ConstanciaOpciones,
+    Constancias,
+    EncuestaSatisfaccion,
+    Estudiantes,
+    Solicitudes,
+)
 
 logger = logging.getLogger(__name__)
 
-from enum import Enum
 
 class SolicitudEstatus(Enum):
     PENDIENTE = 1
-    REVISION = 2  
+    REVISION = 2
     COMPLETO = 3
 
+
 # Métodos para los endpoints de estudiantes
+
 
 def obtener_estudiante_por_no_control(db: Session, no_control: str):
     return db.query(Estudiantes).filter(Estudiantes.no_control == no_control).first()
 
+
 def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
     estudiante = obtener_estudiante_por_no_control(db, no_control)
-    
+
     if estudiante:
         estudiante.contrasena = get_password_hash(nueva_contrasena)
         estudiante.primer_ingreso = False
@@ -33,42 +42,35 @@ def actualizar_contrasena(db: Session, no_control: str, nueva_contrasena: str):
         return estudiante
     return None
 
+
 # Métodos para el endpoint de constancias
+
 
 def crear_solicitud(db: Session, id_estudiante: int, descripcion: str, otros: str, tipos: list[int], folio: int):
     try:
-        nueva_constancia = Constancias(
-            descripcion = descripcion,
-            otros = otros
-        )
-        
+        nueva_constancia = Constancias(descripcion=descripcion, otros=otros)
+
         db.add(nueva_constancia)
         db.flush()
-        
+
         for id_tipo in tipos:
-            opcion = ConstanciaOpciones(
-                id_constancia = nueva_constancia.id,
-                id_constancias_tipo = id_tipo
-            )
+            opcion = ConstanciaOpciones(id_constancia=nueva_constancia.id, id_constancias_tipo=id_tipo)
             db.add(opcion)
 
         nueva_solicitud = Solicitudes(
-            id_estudiantes = id_estudiante,
-            id_constancia = nueva_constancia.id,
-            id_solicitud_estatus = SolicitudEstatus.PENDIENTE.value,
-            id_trabajador = 1,
-            folio = folio
+            id_estudiantes=id_estudiante, id_constancia=nueva_constancia.id, id_solicitud_estatus=SolicitudEstatus.PENDIENTE.value, id_trabajador=1, folio=folio
         )
 
         db.add(nueva_solicitud)
     except Exception as ex:
         logger.debug(ex)
         db.rollback()
-        raise HTTPException(status_code=500, detail="Ocurrio un error al generar la solicitud de la constancia");
+        raise HTTPException(status_code=500, detail="Ocurrio un error al generar la solicitud de la constancia")
     finally:
         db.commit()
 
     return nueva_solicitud
+
 
 def estado_solicitud(db: Session, id_solicitud: int):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).order_by(Solicitudes.fecha_solicitud.desc()).first()
@@ -76,7 +78,8 @@ def estado_solicitud(db: Session, id_solicitud: int):
         return solicitud.estatus
     return None
 
-def actualizar_estado_solicitud(db: Session, id_solicitud:int, nuevo_estado: int):
+
+def actualizar_estado_solicitud(db: Session, id_solicitud: int, nuevo_estado: int):
     solicitud = db.query(Solicitudes).filter(Solicitudes.id == id_solicitud).first()
     if solicitud:
         solicitud.id_solicitud_estatus = nuevo_estado
@@ -90,20 +93,16 @@ def actualizar_estado_solicitud(db: Session, id_solicitud:int, nuevo_estado: int
         return solicitud
     return None
 
+
 def historial_solicitudes(db: Session, id_estudiante: int):
     solicitudes = db.query(Solicitudes).options(joinedload(Solicitudes.estatus)).filter(Solicitudes.id_estudiantes == id_estudiante).all()
     return solicitudes
 
-def guardar_encuesta_estudiante (db: Session, id_estudiante: int, calificacion: int, sugerencia: str):
-    nueva_encuesta = EncuestaSatisfaccion(
-        id_estudiante = id_estudiante,
-        calificacion = calificacion,
-        sugerencia = sugerencia
-    )
+
+def guardar_encuesta_estudiante(db: Session, id_estudiante: int, calificacion: int, sugerencia: str):
+    nueva_encuesta = EncuestaSatisfaccion(id_estudiante=id_estudiante, calificacion=calificacion, sugerencia=sugerencia)
 
     db.add(nueva_encuesta)
     db.commit()
     db.refresh(nueva_encuesta)
     return nueva_encuesta
-
-    

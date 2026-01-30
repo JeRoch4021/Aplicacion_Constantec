@@ -23,7 +23,7 @@ const SolicitudEstatus = (props) => {
 }
 
 export const Solicitudes = () => {
-  const id_estudiante = localStorage.getItem('id_estudiante') || "";
+  const id_estudiante = localStorage.getItem('id_estudiante') || ''
   const { data } = useGetSolicitudes(id_estudiante)
 
   return (
@@ -35,13 +35,27 @@ export const Solicitudes = () => {
       <Table.Root style={{ width: '100%%' }} variant="surface" mt="3">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Constancia</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Descripción de la Constancia</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>No. de Control</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Fecha Solicitud</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Fecha Entrega</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Estatus</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>Descripción del Estatus</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Constancia
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Descripción de la Constancia
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              No. de Control
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Fecha Solicitud
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Fecha Entrega
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Estatus
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell style={{ whiteSpace: 'nowrap' }}>
+              Descripción del Estatus
+            </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -50,17 +64,18 @@ export const Solicitudes = () => {
             data.map((row) => (
               <Table.Row key={row.id}>
                 <Table.RowHeaderCell>
-                  {row.constancia.opciones[0]?.tipo.tipo || "Resultado Desconocido"}
+                  {row.constancia.opciones[0]?.tipo.tipo ||
+                    'Resultado Desconocido'}
                 </Table.RowHeaderCell>
                 <Table.RowHeaderCell>
                   {row.constancia.descripcion}
                 </Table.RowHeaderCell>
                 <Table.Cell>{row.estudiante.no_control}</Table.Cell>
+                <Table.Cell>{row.fecha_solicitud}</Table.Cell>
                 <Table.Cell>
-                  {row.fecha_solicitud}
-                </Table.Cell>
-                <Table.Cell>
-                  {row.estatus.id === SolicitudEstatusTipo.COMPLETO ? row.fecha_entrega : ''}
+                  {row.estatus.id === SolicitudEstatusTipo.COMPLETO
+                    ? row.fecha_entrega
+                    : ''}
                 </Table.Cell>
                 <Table.Cell>
                   <SolicitudEstatus

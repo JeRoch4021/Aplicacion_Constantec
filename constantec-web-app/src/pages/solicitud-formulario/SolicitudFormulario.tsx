@@ -68,7 +68,7 @@ export const SolicitudFormulario = () => {
       setErrorForm('')
     }
 
-    const estudiante_id = localStorage.getItem('id_estudiante') || "";
+    const estudiante_id = localStorage.getItem('id_estudiante') || ''
 
     const peticion: SolicitudPayload = {
       descripcion: descripcion.trim(),
@@ -91,11 +91,18 @@ export const SolicitudFormulario = () => {
   console.log(error, !error, !!error)
 
   return (
-    <Box width="100%" maxWidth="800px" mt="3" px="4"
-     style={{ maxHeight: '80vh', overflowY: 'auto', paddingBottom: '40px' }}>
+    <Box
+      width="100%"
+      maxWidth="800px"
+      mt="3"
+      px="4"
+      style={{ maxHeight: '80vh', overflowY: 'auto', paddingBottom: '40px' }}
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Box>
-          <Text size="3" weight="bold">Folio de factura de pago</Text>
+          <Text size="3" weight="bold">
+            Folio de factura de pago
+          </Text>
           <TextArea
             placeholder="Ingresa el folio"
             mt="2"
@@ -105,11 +112,14 @@ export const SolicitudFormulario = () => {
               const soloNumeros = e.target.value.replace(/\D/g, '')
               setFolio(soloNumeros)
             }}
-            style={{ width: '100%' }}/>
+            style={{ width: '100%' }}
+          />
         </Box>
 
         <Box mt="2">
-          <Text size="3" weight="bold">Descripcion</Text>
+          <Text size="3" weight="bold">
+            Descripcion
+          </Text>
           <TextArea
             placeholder="Descripcion de la constancia"
             mt="2"
@@ -118,61 +128,113 @@ export const SolicitudFormulario = () => {
             onChange={(e) => {
               e.preventDefault()
               setDescripcion(e?.target?.value)
-            }}/>
+            }}
+          />
         </Box>
 
         <Box mt="2">
-          <Text size="3" weight="bold">Marcar la opción que necesites</Text>
+          <Text size="3" weight="bold">
+            Marcar la opción que necesites
+          </Text>
           <Box mt="2">
-            <CheckboxCards.Root disabled={loading} defaultValue={[]} value={opciones || []}
-              onValueChange={ (valores) => {
-                const ultimoSeleccionado = valores.slice(-1);
-                setOpciones(ultimoSeleccionado);
+            <CheckboxCards.Root
+              disabled={loading}
+              defaultValue={[]}
+              value={opciones || []}
+              onValueChange={(valores) => {
+                const ultimoSeleccionado = valores.slice(-1)
+                setOpciones(ultimoSeleccionado)
               }}
-              columns={{ initial: '1', sm: '3', md: '3' }}>
-                
-              <CheckboxCards.Item value="1" onClick={() => {seleccionarOpcion('1')}}>
+              columns={{ initial: '1', sm: '3', md: '3' }}
+            >
+              <CheckboxCards.Item
+                value="1"
+                onClick={() => {
+                  seleccionarOpcion('1')
+                }}
+              >
                 <Text>Inscritos (IMSS, ISSTE, Pagobús)</Text>
               </CheckboxCards.Item>
 
-              <CheckboxCards.Item value="2" onClick={() => {seleccionarOpcion('2')}}>
+              <CheckboxCards.Item
+                value="2"
+                onClick={() => {
+                  seleccionarOpcion('2')
+                }}
+              >
                 <Text>Promedio general</Text>
               </CheckboxCards.Item>
-              
-              <CheckboxCards.Item value="3" onClick={() => {seleccionarOpcion('3')}}>
+
+              <CheckboxCards.Item
+                value="3"
+                onClick={() => {
+                  seleccionarOpcion('3')
+                }}
+              >
                 <Text>Promedio semestre anterior</Text>
               </CheckboxCards.Item>
 
-              <CheckboxCards.Item value="4" onClick={() => {seleccionarOpcion('4')}}>
+              <CheckboxCards.Item
+                value="4"
+                onClick={() => {
+                  seleccionarOpcion('4')
+                }}
+              >
                 <Text>Promedio dos últimos semestres</Text>
               </CheckboxCards.Item>
 
-              <CheckboxCards.Item value="5" onClick={() => {seleccionarOpcion('5')}}>
+              <CheckboxCards.Item
+                value="5"
+                onClick={() => {
+                  seleccionarOpcion('5')
+                }}
+              >
                 <Text>Egresado</Text>
               </CheckboxCards.Item>
-                
-              <CheckboxCards.Item value="6" onClick={() => {seleccionarOpcion('6')}}>
+
+              <CheckboxCards.Item
+                value="6"
+                onClick={() => {
+                  seleccionarOpcion('6')
+                }}
+              >
                 <Text>Bachillerato</Text>
               </CheckboxCards.Item>
-                
-              <CheckboxCards.Item value="7" onClick={() => {seleccionarOpcion('7')}}>
+
+              <CheckboxCards.Item
+                value="7"
+                onClick={() => {
+                  seleccionarOpcion('7')
+                }}
+              >
                 <Text>Maestría</Text>
               </CheckboxCards.Item>
-                
-              <CheckboxCards.Item value="8" onClick={() => {seleccionarOpcion('8')}}>
+
+              <CheckboxCards.Item
+                value="8"
+                onClick={() => {
+                  seleccionarOpcion('8')
+                }}
+              >
                 <Text>Título en tramite</Text>
               </CheckboxCards.Item>
-                
-              <CheckboxCards.Item value="9" onClick={() => {seleccionarOpcion('9')}}>
+
+              <CheckboxCards.Item
+                value="9"
+                onClick={() => {
+                  seleccionarOpcion('9')
+                }}
+              >
                 <Text>Incluir número de Seguro Social</Text>
               </CheckboxCards.Item>
-              
             </CheckboxCards.Root>
           </Box>
         </Box>
-        
+
         <Box mt="2">
-          <Text size="3" weight="bold">Otros</Text>
+          <Text size="3" weight="bold">
+            Otros
+          </Text>
           <TextArea
             placeholder="Describe otros motivos"
             mt="2"
@@ -181,12 +243,18 @@ export const SolicitudFormulario = () => {
             onChange={(e) => {
               e.preventDefault()
               setOtros(e?.target?.value)
-            }}/>
+            }}
+          />
         </Box>
 
         <Flex width="100%" justify="end" align="center" gap="4" mt="3" mb="4">
           {!!errorForm && (
-            <Callout.Root color="red" size="1" mt="2" style={{ flexGrow: 1, maxWidth: '600px' }}>
+            <Callout.Root
+              color="red"
+              size="1"
+              mt="2"
+              style={{ flexGrow: 1, maxWidth: '600px' }}
+            >
               <Callout.Icon>
                 <ExclamationTriangleIcon />
               </Callout.Icon>
@@ -194,7 +262,12 @@ export const SolicitudFormulario = () => {
             </Callout.Root>
           )}
           {status === 'success' && !errorForm && (
-            <Callout.Root color="green" size="1" mt="2" style={{ flexGrow: 1, maxWidth: '600px' }}>
+            <Callout.Root
+              color="green"
+              size="1"
+              mt="2"
+              style={{ flexGrow: 1, maxWidth: '600px' }}
+            >
               <Callout.Icon>
                 <CheckCircledIcon />
               </Callout.Icon>
@@ -206,7 +279,8 @@ export const SolicitudFormulario = () => {
             mt="2"
             style={{ width: '200px', minWidth: '200px' }}
             size="3"
-            disabled={loading}>
+            disabled={loading}
+          >
             {loading && <Spinner />}
             {!loading && 'Enviar'}
           </Button>

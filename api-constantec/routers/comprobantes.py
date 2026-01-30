@@ -1,12 +1,16 @@
-import shutil
 import os
-from database.connection import SessionLocal
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Form
+import shutil
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from models.tables import ComprobantesPago, Estudiantes
+
 from comun.response import Response as CommonResponse
+from database.connection import SessionLocal
+from models.tables import ComprobantesPago, Estudiantes
 
 router = APIRouter()
+
 
 def get_db():
     db = SessionLocal()
@@ -15,16 +19,14 @@ def get_db():
     finally:
         db.close()
 
+
 # Carpeta donde se guardarán los PDFs
 UPLOAD_DIR = "/app/uploads/comprobantes"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+
 @router.post("/factura", response_model=CommonResponse)
-async def guardar_comprobante(
-    no_control: str = Form(...), 
-    archivo: UploadFile = File(...),
-    db: Session = Depends(get_db)
-):
+async def guardar_comprobante(no_control: str = Form(...), archivo: UploadFile = File(...), db: Session = Depends(get_db)):
     # 1. Verificar que el estudiante existe
     estudiante = db.query(Estudiantes).filter(Estudiantes.no_control == no_control).first()
     if not estudiante:
@@ -38,7 +40,7 @@ async def guardar_comprobante(
             raise HTTPException(status_code=500, detail=f"No se pudo crear el directorio: {ex}")
 
     # 3. Crear nombre de archivo único (ej: 20130123_comprobante.pdf)
-    extesion_archivo = archivo.filename.split(".")[-1]
+    extesion_archivo = (archivo.filename or "").split(".")[-1]
     nombre_archivo = f"{no_control}_comprobante.{extesion_archivo}"
     ruta_archivo = f"{UPLOAD_DIR}/{nombre_archivo}"
 
@@ -52,39 +54,32 @@ async def guardar_comprobante(
         archivo.file.close()
 
     # 5. Guardar en la base de datos
-    nuevo_comprobante = ComprobantesPago(
-        factura = nombre_archivo,
-        id_estado_comprobante = 2,
-        id_estudiante = estudiante.id
-    )
+    nuevo_comprobante = ComprobantesPago(factura=nombre_archivo, id_estado_comprobante=2, id_estudiante=estudiante.id)
 
     db.add(nuevo_comprobante)
     db.commit()
     db.refresh(nuevo_comprobante)
 
     return CommonResponse(
-        data = {"id" : nuevo_comprobante.id,
-                "archivo": nombre_archivo,
-                "estado" : nuevo_comprobante.id_estado_comprobante}, 
-                success= True, 
-                messsage="Comprobante guardado exitosamente", 
-                error_code= None)
+        data={"id": nuevo_comprobante.id, "archivo": nombre_archivo, "estado": nuevo_comprobante.id_estado_comprobante},
+        success=True,
+        messsage="Comprobante guardado exitosamente",
+        error_code=None,
+    )
+
 
 @router.get("/{no_control}")
 def obtener_estado_pago(no_control: str, db: Session = Depends(get_db)):
     estudiante = db.query(Estudiantes).filter(Estudiantes.no_control == no_control).first()
-    
+
+    if estudiante is None:
+        return {"estado": 1, "mensaje": "Estudiante no encontrado"}
+
     # Buscamos el último comprobante subido
-    comprobante = db.query(ComprobantesPago)\
-        .filter(ComprobantesPago.id_estudiante == estudiante.id)\
-        .order_by(ComprobantesPago.id.desc())\
-        .first()
+    stmt = select(ComprobantesPago).where(ComprobantesPago.id_estudiante == estudiante.id).order_by(ComprobantesPago.id.desc())
+    comprobante = db.execute(stmt).scalars().first()
 
-    if not comprobante:
-        return {"estado": 1}
+    if comprobante is None:
+        return {"estado": 1, "mensaje": "No se encontraron comprobantes"}
 
-    return {
-        "estado": comprobante.id_estado_comprobante,
-        "motivo_rechazo": comprobante.motivo_rechazo,
-        "archivoNombre": comprobante.factura
-    }
+    return {"estado": comprobante.id_estado_comprobante, "motivo_rechazo": comprobante.motivo_rechazo, "archivoNombre": comprobante.factura}

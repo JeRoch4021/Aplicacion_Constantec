@@ -1,4 +1,13 @@
-import { Container, Box, TextField, Text, Flex, Button, Spinner, Callout } from '@radix-ui/themes'
+import {
+  Container,
+  Box,
+  TextField,
+  Text,
+  Flex,
+  Button,
+  Spinner,
+  Callout,
+} from '@radix-ui/themes'
 import { useEffect, useState } from 'react'
 import logo from '../../assets/images/itl_logo.jpg'
 import { AutenticarPayload, useAutenticarUsuario } from './useAutenticarUsuario'
@@ -7,9 +16,9 @@ import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 export const Login = () => {
   const [usuario, setUsuario] = useState('')
   const [password, setPassword] = useState('')
-  const [errorForm, setError] = useState<string>('');
+  const [errorForm, setError] = useState<string>('')
 
-  const { login, loading, error, status } = useAutenticarUsuario();
+  const { login, loading, error, status } = useAutenticarUsuario()
 
   useEffect(() => {
     if (!!error && error.response?.data?.detail) {
@@ -18,23 +27,24 @@ export const Login = () => {
   }, [error])
 
   useEffect(() => {
-      if (status === 'success') {
+    if (status === 'success') {
+      const token = localStorage.getItem('token')
 
-        const token = localStorage.getItem('token');
-
-        if (token) {
-          const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-          if (payload.tipo === 'admin') {
-                window.location.href = `/admin-access?token=${token}`;
-          } else {
-                window.location.href = '/dashboard';
-          }
+      if (token) {
+        const payload = JSON.parse(
+          atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
+        )
+        if (payload.tipo === 'admin') {
+          window.location.href = `/admin-access?token=${token}`
+        } else {
+          window.location.href = '/dashboard'
         }
       }
-    }, [status]);
+    }
+  }, [status])
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (usuario?.length == 0) {
       setError('Usuario Requerido')
@@ -48,10 +58,10 @@ export const Login = () => {
 
     const peticion: AutenticarPayload = {
       usuario: usuario,
-      password: password
+      password: password,
     }
 
-    login(peticion);
+    login(peticion)
     console.log('aqui llamamos el api por q ya tenemos usuario y password')
   }
 
@@ -69,7 +79,10 @@ export const Login = () => {
               height: 200,
             }}
           />
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-2 max-w-md"
+          >
             <Text size="3">No. de Control</Text>
             <TextField.Root
               type="text"
@@ -95,7 +108,12 @@ export const Login = () => {
               }}
             />
             <Flex pt="3" direction="row" justify="end" width="100%">
-              <Button type="submit" size="3" style={{ width: '100%' }} disabled={loading}>
+              <Button
+                type="submit"
+                size="3"
+                style={{ width: '100%' }}
+                disabled={loading}
+              >
                 {loading && <Spinner />}
                 {!loading && 'Iniciar Sesión'}
               </Button>

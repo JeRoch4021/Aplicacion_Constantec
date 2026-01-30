@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.0
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+        files: ^api-constantec/
+      - id: ruff-format
+        files: ^api-constanc/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        files: ^api-constantec/
+        args: ["--ignore-missing-imports", "--explicit-package-bases", "--namespace-packages"]
+        additional_dependencies: ['sqlalchemy[mypy]', 'pydantic', 'fastapi']
+
+  - repo: local
+    hooks:
+      - id: frontend-prettier
+        name: Prettier (Frontend)
+        entry: bash -c "cd constantec-web-app && npx prettier --write ."
+        language: system
+        files: ^constantec-web-app/
+        pass_filenames: false
+
+      - id: frontend-eslint
+        name: ESLint (Frontend)
+        entry: bash -c "cd constantec-web-app && npx eslint . --fix"
+        language: system
+        files: ^constantec-web-app/
+        pass_filenames: false

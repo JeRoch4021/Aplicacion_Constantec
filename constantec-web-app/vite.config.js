@@ -7,17 +7,17 @@ export default defineConfig({
     proxy: {
       '/v1': {
         target: 'http://localhost:8000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/logout': {
         target: 'http://localhost:8000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/admin-access': {
         target: 'http://localhost:8000',
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
   plugins: [react()],
 })

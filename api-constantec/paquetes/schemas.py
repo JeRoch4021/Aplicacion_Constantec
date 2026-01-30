@@ -1,8 +1,10 @@
-from pydantic import BaseModel
-from typing import List, Optional
 from datetime import date
+from typing import List, Optional
+
+from pydantic import BaseModel
 
 # Constancias
+
 
 class CrearConstanciaRequest(BaseModel):
     descripcion: str
@@ -11,14 +13,17 @@ class CrearConstanciaRequest(BaseModel):
     constancia_opciones: list[int]
     folio: int
 
+
 class ConstanciaBase(BaseModel):
     id: int
     descripcion: str
     otros: Optional[str] = None
 
+
 class ConstanciaSalida(ConstanciaBase):
     class Config:
         orm_mode = True
+
 
 class ConstanciaTiposSchema(BaseModel):
     id: int
@@ -28,12 +33,14 @@ class ConstanciaTiposSchema(BaseModel):
     class Config:
         orm_mode = True
 
+
 class ConstanciaOpcionesSchema(BaseModel):
     id: int
-    tipo: ConstanciaTiposSchema 
+    tipo: ConstanciaTiposSchema
 
     class Config:
         orm_mode = True
+
 
 class ConstanciaSchema(BaseModel):
     descripcion: Optional[str] = None
@@ -43,7 +50,9 @@ class ConstanciaSchema(BaseModel):
     class Config:
         orm_mode = True
 
+
 # Estudiantes
+
 
 class EstudianteSchema(BaseModel):
     no_control: str
@@ -56,6 +65,7 @@ class EstudianteSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class EstudianteBase(BaseModel):
     no_control: str
@@ -70,19 +80,24 @@ class EstudianteBase(BaseModel):
     fecha_registro: date
     is_active: Optional[bool] = True
 
+
 class EstudiantesContrasenaUpdate(BaseModel):
     no_control: str
     nueva_password: str
+
 
 class LoginRequest(BaseModel):
     usuario: str
     password: str
 
+
 class EstudiantesSalida(EstudianteBase):
     class Config:
         orm_mode = True
 
+
 # Trabajadores
+
 
 class TrabajadorSchema(BaseModel):
     id: int
@@ -95,11 +110,14 @@ class TrabajadorSchema(BaseModel):
     correo_institucional: str
     fecha_inicio: date
 
+
 class TrabajadorSalida(TrabajadorSchema):
     class Config:
         orm_mode = True
 
+
 # Solicitudes
+
 
 class SolicitudEstatusSchema(BaseModel):
     id: int
@@ -109,6 +127,7 @@ class SolicitudEstatusSchema(BaseModel):
     class Config:
         orm_mode = True
 
+
 class SolicitudRequestSchema(BaseModel):
     fecha_solicitud: date
     estatus: SolicitudEstatusSchema
@@ -117,6 +136,7 @@ class SolicitudRequestSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class SolicitudResponseSchema(BaseModel):
     fecha_entrega: Optional[date] = None
@@ -130,40 +150,49 @@ class SolicitudResponseSchema(BaseModel):
     class Config:
         orm_mode = True
 
+
 class SolicitudBase(BaseModel):
     id_estudiantes: int
     id_solicitud_estatus: int
     fecha_solicitud: date
     fecha_entrega: Optional[date] = None
 
+
 class SolicitudEstado(BaseModel):
     id_solicitud: int
+
 
 class SolicitudNuevoEstado(BaseModel):
     id_solicitud: int
     nuevo_estado: int
 
+
 class SolicitudSalida(SolicitudBase):
     class Config:
         orm_mode = True
 
+
 # Encuesta de Satisfaccion
+
 
 class EncuestaSatisfaccionCreate(BaseModel):
     id_estudiante: int
     calificacion: int
     sugerencia: str
 
+
 class EncuestaSatisfaccionSalida(BaseModel):
     id: int
     id_estudiante: int
     calificacion: int
     sugerencia: str
-    
+
     class Config:
         orm_mode = True
 
+
 # Comprobante de pago con factura
+
 
 class ComprobanteSalida(BaseModel):
     id: str
@@ -172,4 +201,4 @@ class ComprobanteSalida(BaseModel):
     motivo_rechazo: Optional[str] = None
 
     class Config:
-        from_attributes = True  
+        from_attributes = True

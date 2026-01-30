@@ -1,19 +1,21 @@
 from .administradores import UserAdmin
-from .estudiantes import EstudiantesAdmin
-from .constancias import ConstanciaTiposAdmin, ConstanciaOpcionesAdmin, ConstanciasAdmin
-from .solicitudes import SolicitudEstatusAdmin, SolicitudesAdmin
-from .encuestas import EncuestasAdmin
-from .trabajador import TrabajadorAdmin
 from .comprobantes import ComprobantesAdmin, EstadoComprobantesAdmin
+from .constancias import ConstanciaOpcionesAdmin, ConstanciasAdmin, ConstanciaTiposAdmin
+from .encuestas import EncuestasAdmin
+from .estudiantes import EstudiantesAdmin
+from .solicitudes import SolicitudesAdmin, SolicitudEstatusAdmin
+from .trabajador import TrabajadorAdmin
 
-__all__ = ['UserAdmin',
-           'EstudiantesAdmin',
-           'ConstanciaTiposAdmin',
-           'ConstanciaOpcionesAdmin',
-           'ConstanciasAdmin',
-           'SolicitudEstatusAdmin',
-           'SolicitudesAdmin',
-           'EncuestasAdmin',
-           'ComprobantesAdmin',
-           'EstadoComprobantesAdmin',
-           'TrabajadorAdmin']
+__all__ = [
+    "UserAdmin",
+    "EstudiantesAdmin",
+    "ConstanciaTiposAdmin",
+    "ConstanciaOpcionesAdmin",
+    "ConstanciasAdmin",
+    "SolicitudEstatusAdmin",
+    "SolicitudesAdmin",
+    "EncuestasAdmin",
+    "ComprobantesAdmin",
+    "EstadoComprobantesAdmin",
+    "TrabajadorAdmin",
+]
