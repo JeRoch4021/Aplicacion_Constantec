@@ -17,4 +17,5 @@ RUN pip install --no-cache-dir -r requirements_dev.txt
 COPY api-constantec/ .
 
 # Comando de ejecución para FastAPI
+# --proxy-headers --trusted-hosts "*"
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]

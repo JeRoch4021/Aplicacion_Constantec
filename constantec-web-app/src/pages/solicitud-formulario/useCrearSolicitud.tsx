@@ -11,15 +11,11 @@ export type SolicitudPayload = {
 }
 
 const createSolicitud = async (data: SolicitudPayload) => {
-  const response = await axiosClient.post(
-    '/v1/solicitudes/',
-    data,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+  const response = await axiosClient.post('/v1/solicitudes/', data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 
   return response.data
 }

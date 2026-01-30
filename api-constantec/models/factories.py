@@ -1,13 +1,17 @@
 import datetime
+
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
-#from sqlalchemy import create_engine
-from models.tables import Estudiantes
-from models.admin import Administradores
-from database.connection import SessionLocal
+
 from autenticacion.seguridad import get_password_hash
+from database.connection import SessionLocal
+from models.admin_factorie import Administradores
+
+# from sqlalchemy import create_engine
+from models.tables import Estudiantes
 
 session = SessionLocal()
+
 
 class EstudiantesFactory(SQLAlchemyModelFactory):
     class Meta:
@@ -23,10 +27,11 @@ class EstudiantesFactory(SQLAlchemyModelFactory):
     semestre = factory.Faker("random_int", min=1, max=9)
     carrera = factory.Faker("word")
     municipio = factory.Faker("city")
-    correo_institucional = factory.LazyAttribute(lambda obj: f"{obj.no_control.lower().replace(" ", "_")}@leon.tecnm.mx")
+    correo_institucional = factory.LazyAttribute(lambda obj: f"{obj.no_control.lower().replace(' ', '_')}@leon.tecnm.mx")
     fecha_registro = factory.LazyFunction(datetime.date.today)
-    password = get_password_hash('test')
+    password = get_password_hash("test")
     is_active = True
+
 
 class AdminFactory(SQLAlchemyModelFactory):
     class Meta:
@@ -35,6 +40,6 @@ class AdminFactory(SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     username = factory.Faker("name")
-    password = get_password_hash('test')
+    password = get_password_hash("test")
     is_active = True
     fecha_creacion = factory.LazyFunction(datetime.date.today)

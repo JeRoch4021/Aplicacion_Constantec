@@ -1,140 +1,194 @@
-from sqlalchemy import Column, String, Integer, Date, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import declarative_base
-from datetime import datetime
+from datetime import date, datetime
+from typing import List, Optional
 
-Base = declarative_base()
+from sqlalchemy import Boolean, Date, ForeignKey, Integer, String
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+
+class Base(DeclarativeBase):
+    pass
+
 
 # Tabla de estudiantes del ITL
 class Estudiantes(Base):
     __tablename__ = "estudiantes"
-    
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    no_control = Column(String(20), unique=True, index=True)
-    nombre = Column(String(100), nullable=False)
-    apellidos = Column(String(100), nullable=False)
-    fecha_nacimiento = Column(Date, nullable=False)
-    edad = Column(Integer, nullable=False)
-    semestre = Column(Integer, nullable=False)
-    carrera = Column(String(100), nullable=False)
-    municipio = Column(String(100), nullable=False)
-    correo_institucional = Column(String(150), unique=True, nullable=False)
-    fecha_registro = Column(Date, nullable=False)
-    password = Column(String(255), nullable=False)
-    is_active = Column(Boolean, default=True)
 
-    solicitudes = relationship("Solicitudes", back_populates="estudiante", cascade="all, delete")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    no_control: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    apellidos: Mapped[str] = mapped_column(String(100), nullable=False)
+    fecha_nacimiento: Mapped[date] = mapped_column(Date, nullable=False)
+    edad: Mapped[int] = mapped_column(Integer, nullable=False)
+    semestre: Mapped[int] = mapped_column(Integer, nullable=False)
+    carrera: Mapped[str] = mapped_column(String(100), nullable=False)
+    municipio: Mapped[str] = mapped_column(String(100), nullable=False)
+    correo_institucional: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
+    fecha_registro: Mapped[date] = mapped_column(Date, nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    solicitudes: Mapped[List["Solicitudes"]] = relationship("Solicitudes", back_populates="estudiante", cascade="all, delete")
+
 
 # Tabla de tipos de constancia
 class ConstanciaTipos(Base):
     __tablename__ = "constancia_tipos"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    tipo = Column(String(100), nullable=False)
-    descripcion = Column(String(255), nullable=False)
+    # Definición de columnas con Mapped
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    tipo: Mapped[str] = mapped_column(String(100), nullable=False)
+    descripcion: Mapped[str] = mapped_column(String(255), nullable=False)
+
 
 # Tabla de opciones de constancia
 class ConstanciaOpciones(Base):
     __tablename__ = "constancia_opciones"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_constancia = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    id_constancias_tipo = Column(Integer, ForeignKey("constancia_tipos.id"), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    tipo = relationship("ConstanciaTipos", backref="opciones")
+    # Claves foráneas tipadas
+    id_constancia: Mapped[int] = mapped_column(ForeignKey("constancias.id"), nullable=False)
+    id_constancias_tipo: Mapped[int] = mapped_column(ForeignKey("constancia_tipos.id"), nullable=False)
+
+    # Relación con ConstanciaTipos
+    # Cambiamos backref por back_populates para mejor soporte de MyPy
+    tipo: Mapped["ConstanciaTipos"] = relationship("ConstanciaTipos", back_populates="opciones")
+
 
 # Tabla de constancias
 class Constancias(Base):
     __tablename__ = "constancias"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    descripcion = Column(String(100), nullable=False)
-    otros = Column(String(100), nullable=True)
+    # Columnas tipadas
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    descripcion: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    solicitudes = relationship("Solicitudes", back_populates="constancia")
-    opciones = relationship("ConstanciaOpciones", backref="constancia")
+    # "otros" es nullable=True, por lo que usamos Optional en el tipado
+    otros: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
-# Tabla de estatus de solicitudes 
+    solicitudes: Mapped[List["Solicitudes"]] = relationship("Solicitudes", back_populates="constancia")
+
+    opciones: Mapped[List["ConstanciaOpciones"]] = relationship("ConstanciaOpciones", back_populates="constancia")
+
+
+# Tabla de estatus de solicitudes
 class SolicitudEstatus(Base):
     __tablename__ = "solicitud_estatus"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    tipo = Column(String(100), nullable=False)
-    descripcion = Column(String(100), nullable=False)
+    # Columnas tipadas para MyPy
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    tipo: Mapped[str] = mapped_column(String(100), nullable=False)
+    descripcion: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    solicitudes = relationship("Solicitudes", back_populates="estatus")
+    # Relación inversa: Un estatus puede estar en muchas solicitudes
+    # Usamos List["Solicitudes"] para que MyPy sepa que es una colección
+    solicitudes: Mapped[List["Solicitudes"]] = relationship("Solicitudes", back_populates="estatus")
 
-    def __str__(self):
+    def __str__(self) -> str:
+        # El type hint -> str ayuda a MyPy a validar vistas de admin
         return f"{self.tipo} - {self.descripcion}"
+
 
 # Tabla de solicitudes
 class Solicitudes(Base):
     __tablename__ = "solicitudes"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_estudiantes = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
-    id_constancia = Column(Integer, ForeignKey("constancias.id"), nullable=False)
-    id_solicitud_estatus = Column(Integer, ForeignKey("solicitud_estatus.id"), nullable=False)
-    fecha_solicitud = Column(Date, nullable=False, default= lambda: datetime.now().date())
-    fecha_entrega = Column(Date, nullable=True)
-    id_trabajador = Column(Integer, ForeignKey("trabajadores.id"), nullable=True)
-    folio = Column(String(100), nullable=False)
+    # Columnas con Mapped
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    estudiante = relationship("Estudiantes", back_populates="solicitudes")
-    constancia = relationship("Constancias", back_populates="solicitudes")
-    estatus = relationship("SolicitudEstatus", back_populates="solicitudes")
-    trabajador = relationship("Trabajador", back_populates="solicitudes")
- 
+    # Claves foráneas
+    id_estudiantes: Mapped[int] = mapped_column(ForeignKey("estudiantes.id"), nullable=False)
+    id_constancia: Mapped[int] = mapped_column(ForeignKey("constancias.id"), nullable=False)
+    id_solicitud_estatus: Mapped[int] = mapped_column(ForeignKey("solicitud_estatus.id"), nullable=False)
+
+    # Usamos default de Python directamente en mapped_column
+    fecha_solicitud: Mapped[date] = mapped_column(Date, nullable=False, default=lambda: datetime.now().date())
+
+    # Campos opcionales (pueden ser None en la DB)
+    fecha_entrega: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    id_trabajador: Mapped[Optional[int]] = mapped_column(ForeignKey("trabajadores.id"), nullable=True)
+
+    folio: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    estudiante: Mapped["Estudiantes"] = relationship("Estudiantes", back_populates="solicitudes")
+    constancia: Mapped["Constancias"] = relationship("Constancias", back_populates="solicitudes")
+    estatus: Mapped["SolicitudEstatus"] = relationship("SolicitudEstatus", back_populates="solicitudes")
+    trabajador: Mapped["Trabajador"] = relationship("Trabajador", back_populates="solicitudes")
+
+
 # Tabla de trabajador
 class Trabajador(Base):
     __tablename__ = "trabajadores"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False)
-    apellidos = Column(String(100), nullable=False)
-    fecha_nacimiento = Column(Date, nullable=False)
-    edad = Column(Integer, nullable=False)
-    cargo = Column(String(100), nullable=False)
-    telefono = Column(String(20), nullable=False)
-    correo_institucional = Column(String(150), unique=True, nullable=False)
-    fecha_inicio = Column(Date, nullable=False)
+    # Mapped[tipo] define el tipo para Python/MyPy
+    # mapped_column define la configuración de la base de datos
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    apellidos: Mapped[str] = mapped_column(String(100), nullable=False)
+    fecha_nacimiento: Mapped[date] = mapped_column(Date, nullable=False)
+    edad: Mapped[int] = mapped_column(Integer, nullable=False)
+    cargo: Mapped[str] = mapped_column(String(100), nullable=False)
+    telefono: Mapped[str] = mapped_column(String(20), nullable=False)
+    correo_institucional: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
+    fecha_inicio: Mapped[date] = mapped_column(Date, nullable=False)
 
-    solicitudes = relationship("Solicitudes", back_populates="trabajador")
+    # Para las relaciones, usamos Mapped[List["Clase"]]
+    solicitudes: Mapped[List["Solicitudes"]] = relationship("Solicitudes", back_populates="trabajador")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.id} - {self.nombre} {self.apellidos}"
+
 
 # Tabla de encuestas
 class EncuestaSatisfaccion(Base):
     __tablename__ = "encuesta_satisfaccion"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    calificacion = Column(Integer, nullable=False)
-    sugerencia = Column(String(500), nullable=True)
-    id_estudiante = Column(Integer, ForeignKey("estudiantes.id"), nullable=True)
+    # Definición de columnas con Mapped
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    calificacion: Mapped[int] = mapped_column(Integer, nullable=False)
+    sugerencia: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
-    estudiante = relationship("Estudiantes")
+    # Claves foráneas
+    id_estudiante: Mapped[int] = mapped_column(ForeignKey("estudiantes.id"), nullable=True)
 
+    # Relación Many-to-One
+    # Usamos Optional porque un estudiante puede ser nulo (encuesta anónima)
+    estudiante: Mapped["Estudiantes"] = relationship("Estudiantes")
+
+
+# Tabla de comprobantes
 class ComprobantesPago(Base):
     __tablename__ = "comprobantes_pago"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    factura = Column(String(255), nullable=False)
-    id_estado_comprobante = Column(Integer, ForeignKey("estado_comprobante.id"), nullable=False)
-    motivo_rechazo = Column(String(255), nullable=True)
-    id_estudiante = Column(Integer, ForeignKey("estudiantes.id"), nullable=False)
-    
-    estudiante = relationship("Estudiantes")
-    estado = relationship("EstadoComprobante", back_populates="comprobante")
+    # Columnas con Mapped
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    factura: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    # Claves foráneas
+    id_estado_comprobante: Mapped[int] = mapped_column(ForeignKey("estado_comprobante.id"), nullable=False)
+    id_estudiante: Mapped[int] = mapped_column(ForeignKey("estudiantes.id"), nullable=False)
+    motivo_rechazo: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    # Relaciones Many-to-One
+    # MyPy ahora sabe que 'estudiante' siempre devolverá un objeto Estudiantes
+    estudiante: Mapped["Estudiantes"] = relationship("Estudiantes")
+
+    # Relación con EstadoComprobante
+    estado: Mapped["EstadoComprobante"] = relationship("EstadoComprobante", back_populates="comprobante")
+
 
 class EstadoComprobante(Base):
     __tablename__ = "estado_comprobante"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    tipo = Column(String(255), nullable=False)
-    descripcion = Column(String(100), nullable=False)
-    
-    comprobante = relationship("ComprobantesPago", back_populates="estado")
+    # Columnas tipadas
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    tipo: Mapped[str] = mapped_column(String(255), nullable=False)
+    descripcion: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    def __str__ (self):
+    # Relación inversa (Uno a Muchos)
+    # Un estado puede estar presente en muchos comprobantes
+    comprobante: Mapped[List["ComprobantesPago"]] = relationship("ComprobantesPago", back_populates="estado")
+
+    def __str__(self) -> str:
+        # Definir el retorno como str ayuda a los plugins de Admin
         return f"{self.tipo} - {self.descripcion}"

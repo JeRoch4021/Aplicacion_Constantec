@@ -1,17 +1,19 @@
-from fastapi import status, Response
-from paquetes import schemas
-from sqlalchemy.orm import Session
-from database.connection import SessionLocal
-from fastapi import APIRouter, Depends, HTTPException
-from consultas.consulta_estudiante import obtener_estudiante_por_no_control
-from consultas.consulta_administrador import obtener_administrador_por_id
-from autenticacion.seguridad import verify_password, create_access_token
-from comun.response import Response as CommonResponse
 import logging
+
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy.orm import Session
+
+from autenticacion.seguridad import create_access_token, verify_password
+from comun.response import Response as CommonResponse
+from consultas.consulta_administrador import obtener_administrador_por_id
+from consultas.consulta_estudiante import obtener_estudiante_por_no_control
+from database.connection import SessionLocal
+from paquetes import schemas
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
 
 # Dependencias para obtener sesión de la base de datos
 def get_db():
@@ -20,6 +22,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 @router.post("/", response_model=CommonResponse)
 async def login_for_access_token(login_request: schemas.LoginRequest, response: Response, db: Session = Depends(get_db)):
@@ -30,20 +33,20 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     Authenticates a user with username and password and returns a JWT.
     Client should send credentials as 'application/x-www-form-urlencoded'.
     """
-    try: 
+    try:
         if login_request.usuario.isdigit():
             usuario = obtener_estudiante_por_no_control(db, login_request.usuario)
             tipo = "estudiante" if usuario else None
         else:
             usuario = obtener_administrador_por_id(db, login_request.usuario)
             tipo = "admin" if usuario else None
-        
+
         if usuario is None:
-            raise HTTPException (detail="Usuario no encontrado", status_code=status.HTTP_404_NOT_FOUND)
-        
+            raise HTTPException(detail="Usuario no encontrado", status_code=status.HTTP_404_NOT_FOUND)
+
         logging.debug(usuario.password)
         if not verify_password(login_request.password, usuario.password):
-            raise HTTPException (detail="Password incorrecto", status_code=status.HTTP_401_UNAUTHORIZED)
+            raise HTTPException(detail="Password incorrecto", status_code=status.HTTP_401_UNAUTHORIZED)
 
     except Exception as ex:
         raise ex
@@ -55,18 +58,7 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     }
     access_token = create_access_token(jwt_payload=access_token_payload)
 
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        path="/"
-    )
-    
+    response.set_cookie(key="access_token", value=access_token, httponly=True, path="/")
+
     # Devolvemos la respuesta, comprobando si es un administrador
-    return CommonResponse(
-        data = {"token" : access_token,
-                "id_estudiante": usuario.id,
-                "tipo" : tipo}, 
-                success= True, 
-                messsage="autenticacion exitosa", 
-                error_code= None)
+    return CommonResponse(data={"token": access_token, "id_estudiante": usuario.id, "tipo": tipo}, success=True, messsage="autenticacion exitosa", error_code=None)

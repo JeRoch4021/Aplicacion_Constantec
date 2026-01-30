@@ -1,8 +1,3 @@
-use master;
-create database constantec;
-
-use constantec;
-
 INSERT INTO constancia_tipos (tipo, descripcion) VALUES
 ('Constancia de inscritos', 'Documento que certifica que un estudiante está actualmente inscrito en una institución educativa, indicando generalmente el semestre o ciclo escolar en curso.'),
 ('Constancia de promedio general', 'Documento que muestra el promedio general de todos los semestre cursados por el estudiante, sirviendo como prueba de que el estudiante aún sigue formando parte de la institución.'),

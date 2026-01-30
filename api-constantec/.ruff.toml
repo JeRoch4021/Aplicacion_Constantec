@@ -1,0 +1,3 @@
+line-length = 165
+lint.select = ["E", "F", "I"] # Errores, Pyflakes e Isort
+fix = true

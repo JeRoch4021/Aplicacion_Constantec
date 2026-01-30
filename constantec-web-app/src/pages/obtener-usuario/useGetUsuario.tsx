@@ -2,25 +2,25 @@ import { useQuery } from '@tanstack/react-query'
 import axiosClient from '../../api/axiosClient'
 
 export function getNoControlDeToken() {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.sub;
-    } catch {
-        return null;
-    }
-};
+  const token = localStorage.getItem('token')
+  if (!token) return null
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.sub
+  } catch {
+    return null
+  }
+}
 
 export function useGetUsuario() {
-    const noControl = getNoControlDeToken();
+  const noControl = getNoControlDeToken()
 
-    return useQuery({
-        queryKey: ['perfil de estudiante', noControl],
-        queryFn: async () => {
-            const { data } = await axiosClient.get(`/v1/estudiantes/${noControl}`);
-            return data;
-        },
-        enabled: !!noControl,
-    });
-};
+  return useQuery({
+    queryKey: ['perfil de estudiante', noControl],
+    queryFn: async () => {
+      const { data } = await axiosClient.get(`/v1/estudiantes/${noControl}`)
+      return data
+    },
+    enabled: !!noControl,
+  })
+}

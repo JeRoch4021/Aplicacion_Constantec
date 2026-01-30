@@ -4,13 +4,12 @@ import {
   createRoute,
   createRouter,
   Outlet,
-  redirect
+  redirect,
 } from '@tanstack/react-router'
-// import './App.css'
 import { Login, Dashboard } from './pages'
 
 const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
+  return !!localStorage.getItem('token')
 }
 
 const rootRoute = createRootRoute({
@@ -23,9 +22,9 @@ const LoginRoute = createRoute({
   component: Login,
   beforeLoad: () => {
     if (isAuthenticated()) {
-      throw redirect({ to: '/dashboard' });
+      throw redirect({ to: '/dashboard' })
     }
-  }
+  },
 })
 
 const DashboardRoute = createRoute({
@@ -34,15 +33,12 @@ const DashboardRoute = createRoute({
   component: Dashboard,
   beforeLoad: () => {
     if (!isAuthenticated()) {
-      throw redirect({ to: '/' });
+      throw redirect({ to: '/' })
     }
-  }
+  },
 })
 
-const routeTree = rootRoute.addChildren([
-  LoginRoute,
-  DashboardRoute,
-]);
+const routeTree = rootRoute.addChildren([LoginRoute, DashboardRoute])
 
 const router = createRouter({ routeTree })
 
