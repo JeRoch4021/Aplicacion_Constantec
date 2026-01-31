@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.12.10"
       - name: Install Ruff
-        run: pip install ruff
+        run: pip install ruff==0.14.14
       - name: Run Ruff Check
         run: ruff check api-constantec/
 
@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: "3.12.10"
       - name: Install Ruff
-        run: pip install ruff
+        run: pip install ruff==0.14.14
       - name: Run Ruff Format
         run: ruff format --check api-constantec/
 
