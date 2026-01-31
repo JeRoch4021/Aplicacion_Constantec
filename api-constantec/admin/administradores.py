@@ -1,4 +1,3 @@
-
 from sqladmin import ModelView
 
 # TODO: ¿Por qué no puedo integrar los stubs de wtforms instaladors en mi ruta:
