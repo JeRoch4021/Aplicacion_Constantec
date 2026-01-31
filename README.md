@@ -54,11 +54,6 @@ pip install pre-commit
 pre-commit install
 ```
 
-#### Para ejecutar todas las herramientas de validación y formateo que configurarán el proyecto.
-``` shell
-pre-commit run --all-files
-```
-
 ## Comandos extra
 
 #### 1. Corrige y organiza imports automáticamente 
