@@ -90,3 +90,27 @@ npm run build
 ``` shell
 mv dist ../api-constantec/web-app
 ```
+
+### Configurar el Administrador de Versiones de Nodejs y Python
+
+#### 1. Instalar asdf
+```shell
+~ $ brew install asdf
+```
+
+#### 2. Instalar los plugins de nodejs y python
+```shell
+~ $ asdf plugin add nodejs
+~ $ asdf plugin add python
+```
+
+#### 3. Instalar las versiones requeridas por los plugins (revisarlas en el archivo .tool-verions)
+```shell
+~ $ asdf install nodejs 22.16.0
+~ $ asdf install python 3.12.10
+```
+
+#### 4. Configura las versiones correctas de nodejs y python en tu proyecto
+```shell
+~ $ asdf install
+```
