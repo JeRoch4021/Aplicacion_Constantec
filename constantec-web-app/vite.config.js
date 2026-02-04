@@ -20,4 +20,15 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'], // 'text' shows in terminal, 'html' creates a website
+      include: ['src/**/*'],
+      exclude: ['src/main.jsx', 'src/setupTests.js'], // Exclude entry points
+    },
+  },
 })
