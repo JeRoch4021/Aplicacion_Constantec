@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Text, Callout, Button } from '@radix-ui/themes'
-import ReactPlayer from 'react-player/youtube'
+import ReactPlayer from 'react-player'
 
 export const Tutorial = () => {
   return (

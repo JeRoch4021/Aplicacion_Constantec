@@ -42,7 +42,7 @@ export const useAutenticarUsuario = () => {
     error,
     isPending: loading,
     data: response,
-    ...rest
+    status,
   } = useMutation<
     AutenticarResponse,
     AxiosError<ApiErrorResponse>,
@@ -55,5 +55,5 @@ export const useAutenticarUsuario = () => {
     mutate(request)
   }
 
-  return { ...rest, login, loading, error, response }
+  return { login, loading, error, response, status }
 }

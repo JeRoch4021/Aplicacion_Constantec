@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
@@ -20,4 +20,31 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  resolve: {
+    // This helps jsdom find the ESM versions of packages
+    conditions: ['browser', 'node'],
+    alias: {
+      // Directs any import of tslib to the actual ESM entry point
+      tslib: 'tslib/tslib.es6.js',
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js',
+    // In Vitest 4, try placing inline here:
+    deps: {
+      optimizer: {
+        web: {
+          include: ['tslib', 'jsdom', 'html-encoding-sniffer', '@exodus/bytes'],
+        },
+      },
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*'],
+      exclude: ['src/main.jsx', 'src/setupTests.js'],
+    },
+  },
 })

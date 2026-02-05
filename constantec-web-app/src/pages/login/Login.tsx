@@ -71,7 +71,7 @@ export const Login = () => {
         <Box width="300px" pt="7">
           <img
             src={logo}
-            alt="Bold typography"
+            alt="Logo Tec"
             style={{
               display: 'block',
               objectFit: 'contain',
