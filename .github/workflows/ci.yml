@@ -81,10 +81,9 @@ jobs:
           node-version: "22.16.0"
           cache: 'npm'
           cache-dependency-path: constantec-web-app/package-lock.json
-      
       - name: Install dependencies
         run: npm install
-      
       - name: Run Tests
         # 'run' ensures it doesn't enter watch mode in CI
         run: npm run test -- --run
+
