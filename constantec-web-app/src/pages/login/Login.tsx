@@ -52,7 +52,7 @@ export const Login = () => {
     }
 
     if (password?.length == 0) {
-      setError('Password Requeridoa')
+      setError('Password Requerido')
       return
     }
 

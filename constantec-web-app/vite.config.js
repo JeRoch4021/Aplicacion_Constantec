@@ -25,7 +25,7 @@ export default defineConfig({
     conditions: ['browser', 'node'],
     alias: {
       // Directs any import of tslib to the actual ESM entry point
-      'tslib': 'tslib/tslib.es6.js'
+      tslib: 'tslib/tslib.es6.js',
     },
   },
   test: {
@@ -36,9 +36,9 @@ export default defineConfig({
     deps: {
       optimizer: {
         web: {
-          include: ['tslib','jsdom', 'html-encoding-sniffer', '@exodus/bytes']
-        }
-      }
+          include: ['tslib', 'jsdom', 'html-encoding-sniffer', '@exodus/bytes'],
+        },
+      },
     },
     coverage: {
       provider: 'v8',

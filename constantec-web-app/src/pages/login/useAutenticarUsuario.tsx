@@ -42,7 +42,7 @@ export const useAutenticarUsuario = () => {
     error,
     isPending: loading,
     data: response,
-    status
+    status,
   } = useMutation<
     AutenticarResponse,
     AxiosError<ApiErrorResponse>,
