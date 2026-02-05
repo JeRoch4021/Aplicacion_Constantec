@@ -66,3 +66,25 @@ jobs:
           node-version: "22.16.0"
       - run: npm install
       - run: npx prettier --check .
+
+  # 5. Frontend Tests (Vitest)
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: constantec-web-app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.16.0"
+          cache: 'npm'
+          cache-dependency-path: constantec-web-app/package-lock.json
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run Tests
+        # 'run' ensures it doesn't enter watch mode in CI
+        run: npm run test -- --run
