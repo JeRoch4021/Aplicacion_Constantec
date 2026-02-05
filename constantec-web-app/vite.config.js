@@ -22,7 +22,11 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     // This helps jsdom find the ESM versions of packages
-    conditions: ['browser', 'node'] 
+    conditions: ['browser', 'node'],
+    alias: {
+      // Directs any import of tslib to the actual ESM entry point
+      'tslib': 'tslib/tslib.es6.js'
+    },
   },
   test: {
     globals: true,
@@ -32,7 +36,7 @@ export default defineConfig({
     deps: {
       optimizer: {
         web: {
-          include: ['jsdom', 'html-encoding-sniffer', '@exodus/bytes']
+          include: ['tslib','jsdom', 'html-encoding-sniffer', '@exodus/bytes']
         }
       }
     },
