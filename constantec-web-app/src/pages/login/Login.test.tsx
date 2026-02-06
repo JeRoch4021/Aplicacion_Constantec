@@ -63,10 +63,39 @@ describe('<Login />', () => {
     const loginButton = screen.getByRole('button', { name: /iniciar sesión/i })
     const noControlInput = screen.getByPlaceholderText('Numero de Control')
 
-    fireEvent.change(noControlInput, { target: { value: '123456' } })
+    fireEvent.change(noControlInput, { target: { value: '123' } })
 
     fireEvent.click(loginButton)
 
     expect(screen.getByText('Password Requerido')).toBeInTheDocument()
+  })
+
+  it('should show succesful message when the username and password are correct', async () => {
+    const mockLogin = vi.fn()
+    
+    useAutenticarUsuarioSpy.mockReturnValue({
+      login: mockLogin,
+      loading: false,
+      error: null,
+      status: 'idle',
+      response: { 
+        data: {"token": '22240000', "id_estudiante": '1', "tipo": 'estudiante'}, 
+        success: true, 
+        message: "autenticacion exitosa", 
+        error_code: null },
+    })
+
+    render(<Login />)
+
+    const loginButton = screen.getByRole('button', { name: /iniciar sesión/i })
+    const noControlInput = screen.getByPlaceholderText('Numero de Control')
+    const passwordInput = screen.getByPlaceholderText('Enter your password')
+
+    fireEvent.change(noControlInput, { target: { value: '123' } })
+    fireEvent.change(passwordInput, { target: { value: 'test' } })
+    fireEvent.click(loginButton)
+
+    const successMsg = await screen.findByText(/autenticacion exitosa/i)
+    expect(successMsg).toBeInTheDocument()
   })
 })
