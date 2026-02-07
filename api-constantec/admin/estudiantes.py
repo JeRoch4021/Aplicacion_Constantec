@@ -8,8 +8,7 @@ from autenticacion.seguridad import get_password_hash
 from models.tables import Estudiantes
 
 
-class EstudiantesAdmin(ModelView):
-    model = Estudiantes
+class EstudiantesAdmin(ModelView, model = Estudiantes): # type: ignore
     name = "Estudiante"
     name_plural = "Estudiantes"
 

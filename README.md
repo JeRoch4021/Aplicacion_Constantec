@@ -24,6 +24,7 @@ Aplicacion_Constantec$ docker compose -f docker-compose-dev.yml up
 Aplicacion_Constantec$ docker exec -it constantec-dev /bin/bash
 $ ipython
 from models.factories import EstudiantesFactory
+from models.factories import AdminFactory
 from database.connection import SessionLocal
 from autenticacion.seguridad import get_password_hash
 sesion = SessionLocal()
