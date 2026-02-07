@@ -3,8 +3,7 @@ from sqladmin import ModelView
 from models.tables import Solicitudes, SolicitudEstatus
 
 
-class SolicitudEstatusAdmin(ModelView):
-    model = SolicitudEstatus
+class SolicitudEstatusAdmin(ModelView, model = SolicitudEstatus): # type: ignore
     name = "Estatus de Solicitud"
     name_plural = "Estatus de Solicitudes"
 
@@ -13,8 +12,7 @@ class SolicitudEstatusAdmin(ModelView):
     form_columns = [SolicitudEstatus.id, SolicitudEstatus.tipo, SolicitudEstatus.descripcion]
 
 
-class SolicitudesAdmin(ModelView):
-    model = Solicitudes
+class SolicitudesAdmin(ModelView, model = Solicitudes): # type: ignore
     name = "Solicitudes"
     name_plural = "Solicitudes"
 

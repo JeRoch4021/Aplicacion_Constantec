@@ -61,4 +61,4 @@ async def login_for_access_token(login_request: schemas.LoginRequest, response: 
     response.set_cookie(key="access_token", value=access_token, httponly=True, path="/")
 
     # Devolvemos la respuesta, comprobando si es un administrador
-    return CommonResponse(data={"token": access_token, "id_estudiante": usuario.id, "tipo": tipo}, success=True, messsage="autenticacion exitosa", error_code=None)
+    return CommonResponse(data={"token": access_token, "id_estudiante": usuario.id, "tipo": tipo}, success=True, message="autenticacion exitosa", error_code=None)

@@ -62,7 +62,6 @@ export const Login = () => {
     }
 
     login(peticion)
-    console.log('aqui llamamos el api por q ya tenemos usuario y password')
   }
 
   return (
