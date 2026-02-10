@@ -63,7 +63,7 @@ async def guardar_comprobante(no_control: str = Form(...), archivo: UploadFile =
     return CommonResponse(
         data={"id": nuevo_comprobante.id, "archivo": nombre_archivo, "estado": nuevo_comprobante.id_estado_comprobante},
         success=True,
-        messsage="Comprobante guardado exitosamente",
+        message="Comprobante guardado exitosamente",
         error_code=None,
     )
 

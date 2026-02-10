@@ -5,7 +5,7 @@ from factory.alchemy import SQLAlchemyModelFactory
 
 from autenticacion.seguridad import get_password_hash
 from database.connection import SessionLocal
-from models.admin_factorie import Administradores
+from models.admin import Administradores
 
 # from sqlalchemy import create_engine
 from models.tables import Estudiantes

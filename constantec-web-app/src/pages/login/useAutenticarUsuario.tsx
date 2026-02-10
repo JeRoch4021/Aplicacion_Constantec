@@ -13,7 +13,7 @@ type ApiErrorResponse = {
 
 type AutenticarResponse = {
   success: boolean
-  messsage: string
+  message: string
   error_code: string | null
   data: {
     token: string

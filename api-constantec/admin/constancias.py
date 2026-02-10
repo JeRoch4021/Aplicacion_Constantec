@@ -3,8 +3,7 @@ from sqladmin import ModelView
 from models.tables import ConstanciaOpciones, Constancias, ConstanciaTipos
 
 
-class ConstanciaTiposAdmin(ModelView):
-    model = ConstanciaTipos
+class ConstanciaTiposAdmin(ModelView, model=ConstanciaTipos):  # type: ignore
     name = "Tipo de Constancia"
     name_plural = "Tipos de Constancias"
 
@@ -13,8 +12,7 @@ class ConstanciaTiposAdmin(ModelView):
     form_columns = [ConstanciaTipos.id, ConstanciaTipos.tipo, ConstanciaTipos.descripcion]
 
 
-class ConstanciaOpcionesAdmin(ModelView):
-    model = ConstanciaOpciones
+class ConstanciaOpcionesAdmin(ModelView, model=ConstanciaOpciones):  # type: ignore
     name = "Opciones de Constancia"
     name_plural = "Opciones de Constancias"
 
@@ -23,8 +21,7 @@ class ConstanciaOpcionesAdmin(ModelView):
     form_columns = [ConstanciaOpciones.id, ConstanciaOpciones.id_constancia, ConstanciaOpciones.id_constancias_tipo]
 
 
-class ConstanciasAdmin(ModelView):
-    model = Constancias
+class ConstanciasAdmin(ModelView, model=Constancias):  # type: ignore
     name = "Constancias"
     name_plural = "Constancias"
 

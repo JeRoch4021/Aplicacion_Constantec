@@ -3,8 +3,7 @@ from sqladmin import ModelView
 from models.tables import EncuestaSatisfaccion
 
 
-class EncuestasAdmin(ModelView):
-    model = EncuestaSatisfaccion
+class EncuestasAdmin(ModelView, model=EncuestaSatisfaccion):  # type: ignore
     name = "Encuestas de Estudiantes"
     name_plural = "Encuestas de Estudiantes"
 

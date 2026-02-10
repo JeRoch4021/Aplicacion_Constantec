@@ -5,6 +5,6 @@ from pydantic import BaseModel
 
 class Response(BaseModel):
     success: bool
-    messsage: str
+    message: str
     error_code: str | None
     data: Any

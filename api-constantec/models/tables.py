@@ -39,6 +39,9 @@ class ConstanciaTipos(Base):
     tipo: Mapped[str] = mapped_column(String(100), nullable=False)
     descripcion: Mapped[str] = mapped_column(String(255), nullable=False)
 
+    # Relationship as a List
+    opciones: Mapped[List["ConstanciaOpciones"]] = relationship("ConstanciaOpciones", back_populates="tipo")
+
 
 # Tabla de opciones de constancia
 class ConstanciaOpciones(Base):
@@ -50,9 +53,9 @@ class ConstanciaOpciones(Base):
     id_constancia: Mapped[int] = mapped_column(ForeignKey("constancias.id"), nullable=False)
     id_constancias_tipo: Mapped[int] = mapped_column(ForeignKey("constancia_tipos.id"), nullable=False)
 
-    # Relación con ConstanciaTipos
-    # Cambiamos backref por back_populates para mejor soporte de MyPy
     tipo: Mapped["ConstanciaTipos"] = relationship("ConstanciaTipos", back_populates="opciones")
+
+    constancia: Mapped["Constancias"] = relationship("Constancias", back_populates="opciones")
 
 
 # Tabla de constancias
