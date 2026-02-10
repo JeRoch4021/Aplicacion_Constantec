@@ -17,18 +17,18 @@ describe('<Login />', () => {
     vi.stubGlobal('location', {
       ...window.location, // Copy original properties
       href: '',
-      assign: vi.fn(),    // Mock common methods to avoid more errors
+      assign: vi.fn(), // Mock common methods to avoid more errors
       replace: vi.fn(),
-    });
+    })
 
-    localStorage.clear();
-    vi.spyOn(Storage.prototype, 'getItem');
+    localStorage.clear()
+    vi.spyOn(Storage.prototype, 'getItem')
   })
 
   afterAll(() => {
     // This automatically cleans up everything changed by stubGlobal
-  vi.unstubAllGlobals(); 
-  vi.restoreAllMocks();
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   it('should render the login form', () => {
@@ -128,7 +128,7 @@ describe('<Login />', () => {
   })
 
   it('should redirect to admin page when user is an admin', () => {
-    const mockToken = "abc.eyJ0aXBvIjoiYWRtaW4ifQ.xyz"
+    const mockToken = 'abc.eyJ0aXBvIjoiYWRtaW4ifQ.xyz'
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(mockToken)
 
     useAutenticarUsuarioSpy.mockReturnValue({
@@ -177,7 +177,7 @@ describe('<Login />', () => {
         data: {
           token: mockToken,
           id_estudiante: '1',
-          tipo: 'admin',
+          tipo: 'estudiante',
         },
       },
     })
@@ -192,6 +192,6 @@ describe('<Login />', () => {
     fireEvent.change(passwordInput, { target: { value: 'test' } })
     fireEvent.click(loginButton)
 
-    expect(window.location.href).toBe("/dashboard")
+    expect(window.location.href).toBe('/dashboard')
   })
 })

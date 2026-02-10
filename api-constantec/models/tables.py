@@ -38,12 +38,9 @@ class ConstanciaTipos(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     tipo: Mapped[str] = mapped_column(String(100), nullable=False)
     descripcion: Mapped[str] = mapped_column(String(255), nullable=False)
-    
+
     # Relationship as a List
-    opciones: Mapped[List["ConstanciaOpciones"]] = relationship(
-        "ConstanciaOpciones", 
-        back_populates="tipo"
-    )
+    opciones: Mapped[List["ConstanciaOpciones"]] = relationship("ConstanciaOpciones", back_populates="tipo")
 
 
 # Tabla de opciones de constancia

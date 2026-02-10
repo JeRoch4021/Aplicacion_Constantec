@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { Box, Text, Callout, Button } from '@radix-ui/themes'
 import ReactPlayer from 'react-player'
 
@@ -41,7 +40,7 @@ export const Tutorial = () => {
           }}
         >
           <ReactPlayer
-            url="https://youtu.be/Wf3PX-GG6Q4?si=7xxN0os0Ntbh2383"
+            src="https://youtu.be/Wf3PX-GG6Q4?si=7xxN0os0Ntbh2383"
             controls={true}
             width="100%"
             height="100%"

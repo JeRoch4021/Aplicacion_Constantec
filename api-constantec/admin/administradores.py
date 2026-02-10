@@ -8,7 +8,7 @@ from autenticacion.seguridad import get_password_hash
 from models.admin import Administradores
 
 
-class UserAdmin(ModelView, model = Administradores): # type: ignore
+class UserAdmin(ModelView, model=Administradores):  # type: ignore
     name = "Usuario"
     name_plural = "Usuarios"
 
