@@ -18,8 +18,8 @@ class EstudiantesFactory(SQLAlchemyModelFactory):
         model = Estudiantes
         sqlalchemy_session = session
         sqlalchemy_session_persistence = "commit"
-
-    no_control = factory.Faker("bothify", text="########")
+    
+    no_control = factory.Sequence(lambda n: f"{n:08d}")
     nombre = factory.Faker("name")
     apellidos = factory.Faker("last_name")
     fecha_nacimiento = factory.Faker("date_of_birth")
