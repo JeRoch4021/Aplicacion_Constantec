@@ -6,17 +6,27 @@ def test_get_estudiante(client, session):
     # 1. ARRANGE: Create a real record in the Postgres test DB with one line!
     estudiante = EstudiantesFactory()
     
-    # 2. ACT: Call the API endpoint
-    response = client.get(f"/v1/estudiantes/{estudiante.no_control}")
+    # 2. Take the user and password of endpoint data
+    breakpoint()
+    login_data = {"usuario": estudiante.nombre, "password": "test"}
+    response = client.post("/v1/login/", data=login_data)
 
-    # 3. ASSERT: 
+    # 3. Extract the token
+    breakpoint()
+    token = response.json().get("token")
+    
+    # 4. ACT: Call the API endpoint
+    breakpoint()
+    auth_headers = {"Authorization": f"Bearer {token}"}
+    response = client.get(f"/v1/estudiantes/{estudiante.no_control}", headers=auth_headers)
+
+    # 5. ASSERT: 
     # Check if the API responded successfully
     breakpoint()
     assert response.status_code == status.HTTP_200_OK
-    breakpoint()
     api_data = response.json()
 
-    # 4. DATABASE COMPARISON:
+    # 6. DATABASE COMPARISON:
     # Fetch the record directly from Postgres to verify
     breakpoint()
     db_record = session.query(Estudiantes).filter(Estudiantes.id == estudiante.id).first()

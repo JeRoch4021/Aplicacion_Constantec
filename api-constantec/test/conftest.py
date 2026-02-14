@@ -77,10 +77,13 @@ def client(session):
             yield session
         finally:
             pass # Session is handled by the fixture lifecycle
+
     #breakpoint()
     app.dependency_overrides[get_db] = override_get_db
-    c = TestClient(app)
-    yield c
+
+    #c = TestClient(app)
+    with TestClient(app) as c:
+        yield c
     
     # Reset the overrides so other tests aren't affected
     app.dependency_overrides.clear()
